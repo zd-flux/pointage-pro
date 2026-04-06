@@ -50,7 +50,7 @@ input,select,textarea{font-family:'Outfit',sans-serif;}
 @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.4;}}
 
 /* ── APP SHELL ── */
-.shell{min-height:100vh;background:#F2F0EC;display:flex;flex-direction:column;}
+.shell{min-height:100vh;background:#FFFFFF;display:flex;flex-direction:column;}
 
 /* ── TOP BAR ── */
 .topbar{background:#0F0F14;padding:0 20px;display:flex;align-items:center;gap:12px;height:60px;position:sticky;top:0;z-index:100;border-bottom:1px solid #1A1A24;}
@@ -129,7 +129,10 @@ textarea.inp{resize:none;min-height:80px;font-family:'Outfit',sans-serif;font-si
 .empty-sub{font-size:13px;color:#9CA3AF;}
 
 /* ── FAB ── */
-.fab-wrap{position:sticky;bottom:72px;padding:0 16px 12px;background:linear-gradient(transparent,#F2F0EC 50%);}
+.fab-wrap{position:sticky;bottom:72px;padding:0 16px 12px;background:linear-gradient(transparent,#FFFFFF 50%);}
+.card{background:#fff;border:1px solid #E5E7EB;box-shadow:0 2px 10px rgba(0,0,0,0.04);}
+.kpi-box{border:1px solid #E5E7EB;}
+.type-block{background:#F8F8FC;}
 
 /* ── ALERT ── */
 .alert{border-radius:12px;padding:12px 16px;margin-bottom:14px;display:flex;align-items:center;gap:10px;font-size:13px;font-weight:600;}
@@ -281,12 +284,20 @@ function renderTabContent(){
 // ══ FAIRE MA FDS ══
 function renderFaireFDS(){
   const myF=S.fiches.filter(f=>f.nom===(S.role==='responsable'?'Jean Martin':'Marie Dupont')).slice(0,2);
+  const cc=S.role==='responsable'?'#0D9488':'#4F46E5';
+  const cc2=S.role==='responsable'?'#14B8A6':'#6366F1';
+  const bgTint=S.role==='responsable'?'rgba(13,148,136,0.08)':'rgba(79,70,229,0.08)';
+  const days=[['L','Lundi'],['M','Mardi'],['M','Mercredi'],['J','Jeudi'],['V','Vendredi'],['S','Samedi'],['D','Dimanche']];
   return`<div>
-    <div style="background:linear-gradient(135deg,#6366F1,#8B5CF6);border-radius:18px;padding:20px;margin-bottom:16px;color:white">
-      <div style="font-size:12px;color:rgba(255,255,255,0.6);margin-bottom:4px">Semaine en cours</div>
-      <div style="font-size:22px;font-weight:900;margin-bottom:4px">Semaine 15</div>
-      <div style="font-size:12px;color:rgba(255,255,255,0.7)">${semLbl(15,2026)}</div>
-      <button class="btn" onclick="newFiche()" style="background:white;color:#6366F1;margin-top:16px;border-radius:12px;padding:12px;font-size:14px">✏️ Remplir ma fiche</button>
+    <div style="background:linear-gradient(135deg,${cc},${cc2});border-radius:18px;padding:22px;margin-bottom:16px;color:white;box-shadow:0 8px 24px ${bgTint.replace('0.08','0.25')}">
+      <div style="font-size:12px;color:rgba(255,255,255,0.75);margin-bottom:4px;font-weight:600;letter-spacing:0.05em;text-transform:uppercase">Semaine en cours</div>
+      <div style="font-size:24px;font-weight:900;margin-bottom:4px">Semaine 15</div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.8)">${semLbl(15,2026)}</div>
+      <button class="btn" onclick="newFiche()" style="background:white;color:${cc};margin-top:16px;border-radius:12px;padding:12px;font-size:14px;font-weight:700">✏️ Remplir ma fiche</button>
+    </div>
+    <div class="sec-lbl" style="margin-top:4px">Jours de la semaine</div>
+    <div style="display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap">
+      ${days.map(([i,n])=>`<div title="${n}" style="width:40px;height:40px;border-radius:10px;background:${bgTint};color:${cc};display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;border:1px solid ${bgTint.replace('0.08','0.2')}">${i}</div>`).join('')}
     </div>
     <div class="sec-lbl">Dernières fiches soumises</div>
     ${myF.length?myF.map(f=>renderFicheCard(f)).join(''):'<div class="empty"><div class="empty-icon">📝</div><div class="empty-title">Aucune fiche</div><div class="empty-sub">Créez votre première fiche de semaine</div></div>'}
@@ -313,7 +324,7 @@ function renderMesFDS(){
 function renderValiderFDS(){
   const pen=S.fiches.filter(f=>f.statut==='soumis');
   return`<div>
-    ${pen.length?`<div class="alert" style="background:#FFFBEB;border:1px solid #FDE68A;color:#92400E">⚠️ ${pen.length} fiche${pen.length>1?'s':''} en attente de validation</div>`:''}
+    ${pen.length?`<div class="alert" style="background:#FFF7ED;border:1px solid #FED7AA;color:#9A3412"><span style="font-size:18px">⚠️</span> ${pen.length} fiche${pen.length>1?'s':''} en attente de validation</div>`:''}
     ${pen.length?pen.map(f=>renderFicheCard(f,'resp')).join(''):`<div class="empty"><div class="empty-icon">🎉</div><div class="empty-title">Tout est validé !</div><div class="empty-sub">Aucune fiche en attente</div></div>`}
   </div>`;
 }
@@ -321,23 +332,35 @@ function renderValiderFDS(){
 // ══ ASSISTANTE ══
 function renderASaisir(){
   const ts=S.fiches.filter(f=>f.statut==='validé'&&!f.dateSaisie);
+  const done=S.fiches.filter(f=>f.statut==='validé'&&f.dateSaisie).length;
   return`<div>
-    ${ts.length?`<div class="alert" style="background:#FEF3C7;border:1px solid #FDE68A;color:#92400E">📋 ${ts.length} fiche${ts.length>1?'s':''} à saisir dans le logiciel de paie</div>`:''}
+    <div class="kpi-grid" style="grid-template-columns:1fr 1fr">
+      <div class="kpi-box" style="background:#FFFBEB;border-color:#FDE68A"><div style="font-size:30px;font-weight:900;color:#D97706;font-family:'JetBrains Mono',monospace">${ts.length}</div><div style="font-size:11px;color:#92400E;font-weight:600">À saisir</div></div>
+      <div class="kpi-box" style="background:#ECFDF5;border-color:#A7F3D0"><div style="font-size:30px;font-weight:900;color:#059669;font-family:'JetBrains Mono',monospace">${done}</div><div style="font-size:11px;color:#065F46;font-weight:600">Saisies</div></div>
+    </div>
+    ${ts.length?`<div class="alert" style="background:#FEF3C7;border:1px solid #FDE68A;color:#92400E"><span style="font-size:18px">📋</span> ${ts.length} fiche${ts.length>1?'s':''} à saisir dans le logiciel de paie</div>`:''}
     ${ts.length?ts.map(f=>renderFicheCard(f,'assist')).join(''):`<div class="empty"><div class="empty-icon">✅</div><div class="empty-title">Tout est à jour !</div><div class="empty-sub">Aucune fiche à saisir</div></div>`}
   </div>`;
 }
 function renderSaisies(){
   const ss=S.fiches.filter(f=>f.statut==='validé'&&f.dateSaisie);
+  const rest=S.fiches.filter(f=>f.statut==='validé'&&!f.dateSaisie).length;
+  const tot=ss.length+rest;
+  const pct=tot?Math.round(ss.length*100/tot):0;
   return`<div>
     <div class="kpi-grid" style="grid-template-columns:1fr 1fr">
-      <div class="kpi-box"><div style="font-size:32px;font-weight:900;color:#059669;font-family:'JetBrains Mono',monospace">${ss.length}</div><div style="font-size:10px;color:#9CA3AF">Saisies ce mois</div></div>
-      <div class="kpi-box"><div style="font-size:32px;font-weight:900;color:#6366F1;font-family:'JetBrains Mono',monospace">${S.fiches.filter(f=>f.statut==='validé'&&!f.dateSaisie).length}</div><div style="font-size:10px;color:#9CA3AF">Restantes</div></div>
+      <div class="kpi-box" style="background:#ECFDF5;border-color:#A7F3D0"><div style="font-size:32px;font-weight:900;color:#059669;font-family:'JetBrains Mono',monospace">${ss.length}</div><div style="font-size:11px;color:#065F46;font-weight:600">Saisies ce mois</div></div>
+      <div class="kpi-box" style="background:#FFFBEB;border-color:#FDE68A"><div style="font-size:32px;font-weight:900;color:#D97706;font-family:'JetBrains Mono',monospace">${rest}</div><div style="font-size:11px;color:#92400E;font-weight:600">Restantes</div></div>
+    </div>
+    <div style="background:#fff;border:1px solid #E5E7EB;border-radius:14px;padding:14px 16px;margin-bottom:16px">
+      <div style="display:flex;justify-content:space-between;margin-bottom:8px"><span style="font-size:12px;font-weight:700;color:#065F46">Progression du mois</span><span style="font-size:12px;font-weight:800;color:#059669;font-family:'JetBrains Mono',monospace">${pct}%</span></div>
+      <div style="height:8px;background:#F3F4F6;border-radius:999px;overflow:hidden"><div style="height:100%;width:${pct}%;background:linear-gradient(90deg,#10B981,#059669);border-radius:999px;transition:width .4s"></div></div>
     </div>
     <div class="sec-lbl">FDS déjà saisies</div>
-    ${ss.length?ss.map(f=>`<div class="card" onclick="openF('${f.id}')" style="opacity:0.7">
+    ${ss.length?ss.map(f=>`<div class="card" onclick="openF('${f.id}')" style="border-left:4px solid #059669">
       <div style="display:flex;justify-content:space-between;align-items:center">
-        <div><div style="font-weight:800;font-size:15px;color:#111">${f.nom}</div><div style="font-size:12px;color:#9CA3AF">Sem. ${f.sem} — Saisi le ${f.dateSaisie}</div></div>
-        <span style="color:#059669">✓</span>
+        <div><div style="font-weight:800;font-size:15px;color:#111">${f.nom}</div><div style="font-size:12px;color:#6B7280">Sem. ${f.sem} — Saisi le ${f.dateSaisie}</div></div>
+        <div style="width:32px;height:32px;border-radius:50%;background:#ECFDF5;color:#059669;display:flex;align-items:center;justify-content:center;font-weight:800">✓</div>
       </div></div>`).join(''):`<div class="empty"><div class="empty-icon">📋</div><div class="empty-title">Aucune fiche saisie</div></div>`}
   </div>`;
 }
@@ -345,22 +368,28 @@ function renderSaisies(){
 // ══ FICHE CARD ══
 function renderFicheCard(f,mode=''){
   const rn=f.statut==='refusé'&&f.noteR?`<div style="margin-top:10px;padding:8px 12px;background:#FEF2F2;border-radius:8px;font-size:12px;color:#DC2626">⚠ ${f.noteR}</div>`:'';
-  return`<div class="card" onclick="openF('${f.id}')" style="border-color:${f.statut==='refusé'?'#FECACA':f.statut==='validé'&&mode==='assist'?'#6EE7B7':'transparent'}">
+  const leftC={soumis:'#F59E0B','validé':'#059669','refusé':'#DC2626',brouillon:'#9CA3AF'}[f.statut]||'#E5E7EB';
+  const primesBadges=f.primes.length?`<div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:8px">${f.primes.map(p=>{const d=PRIMES.find(x=>x.id===p.id);return d?`<span style="font-size:10px;font-weight:700;padding:3px 8px;border-radius:999px;background:${d.color}22;color:${d.color}">${d.icon} ${d.label} ×${p.q}</span>`:''}).join('')}</div>`:'';
+  const actions=mode==='resp'?`<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px" onclick="event.stopPropagation()"><button onclick="quickRefus('${f.id}')" style="padding:10px;border-radius:10px;border:1.5px solid #FECACA;background:#FEF2F2;color:#DC2626;font-weight:700;font-size:13px;cursor:pointer">✕ Refuser</button><button onclick="quickVal('${f.id}')" style="padding:10px;border-radius:10px;border:none;background:#059669;color:#fff;font-weight:700;font-size:13px;cursor:pointer">✓ Valider</button></div>`:mode==='assist'?`<button onclick="event.stopPropagation();quickSaisir('${f.id}')" style="margin-top:12px;padding:10px 16px;border-radius:10px;border:none;background:#D97706;color:#fff;font-weight:700;font-size:13px;cursor:pointer;width:100%">📝 Saisir dans la paie</button>`:'';
+  return`<div class="card" onclick="openF('${f.id}')" style="border-left:4px solid ${leftC}">
     <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
       <div>
         ${mode==='resp'||mode==='assist'?`<div style="font-weight:800;font-size:15px;color:#111">${f.nom}</div>`:''}
-        <div style="font-weight:${mode?600:800};font-size:${mode?13:15}px;color:#${mode?'6B7280':'111'}">Semaine ${f.sem}</div>
+        <div style="font-weight:${mode?600:800};font-size:${mode?13:15}px;color:${mode?'#6B7280':'#111'}">Semaine ${f.sem}</div>
         <div style="font-size:11px;color:#9CA3AF;margin-top:1px">${semLbl(f.sem,f.an)}</div>
       </div>${bdg(f.statut)}
     </div>
     <div style="display:flex;gap:12px;align-items:center;font-size:13px">
       <span style="font-weight:700;color:#111;font-family:'JetBrains Mono',monospace">⏱ ${fmtH(totF(f))}</span>
-      ${f.primes.length?`<span style="font-size:12px;color:#9CA3AF">${f.primes.length} prime${f.primes.length>1?'s':''}</span>`:''}
-      ${totP(f)?`<span style="font-size:12px;color:#9CA3AF">${totP(f)}€</span>`:''}
+      ${totP(f)?`<span style="font-size:12px;color:#6B7280;font-weight:600">${totP(f)}€ de primes</span>`:''}
       <span style="margin-left:auto;font-size:11px;color:#C4C7CE">${f.date}</span>
-    </div>${rn}
+    </div>
+    ${primesBadges}${rn}${actions}
   </div>`;
 }
+function quickVal(id){event.stopPropagation();const f=S.fiches.find(x=>x.id===id);if(f){f.statut='validé';f.noteR='Validé ✓';R();}}
+function quickRefus(id){event.stopPropagation();const r=prompt('Motif du refus :');if(r){const f=S.fiches.find(x=>x.id===id);if(f){f.statut='refusé';f.noteR=r;R();}}}
+function quickSaisir(id){event.stopPropagation();const f=S.fiches.find(x=>x.id===id);if(f){f.dateSaisie=new Date().toISOString().slice(0,10);R();}}
 function openF(id){S.sel=S.fiches.find(f=>f.id===id);S.view='detail';R();}
 
 // ══ DETAIL ══
