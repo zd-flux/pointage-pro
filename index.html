@@ -145,11 +145,23 @@ textarea.inp{resize:none;min-height:80px;font-family:'Outfit',sans-serif;font-si
 const TYPES=[
   {id:'normal',label:'Heures normales',taux:100,color:'#6366F1'},
 ];
-const PRIMES=[
-  {id:'dep',    label:'Déplacement',  montant:100,icon:'🚗',color:'#3B82F6'},
-  {id:'astr',   label:'Astreinte',    montant:50, icon:'📟',color:'#8B5CF6'},
-  {id:'wejf',   label:'Week-End/JF',  montant:80, icon:'📅',color:'#F97316'},
+const PRIME_CATS=[
+  {id:'dep', label:'Déplacement', color:'#3B82F6', icon:'🚗', items:[
+    {id:'dep_s',label:'Petit déplacement',montant:20},
+    {id:'dep_m',label:'Moyen déplacement',montant:50},
+    {id:'dep_l',label:'Grand déplacement',montant:100},
+  ]},
+  {id:'astr', label:'Astreinte', color:'#8B5CF6', icon:'📟', items:[
+    {id:'astr_sem',label:'Astreinte semaine',montant:50},
+    {id:'astr_we', label:'Astreinte week-end',montant:80},
+  ]},
+  {id:'wejf', label:'Week-End / JF', color:'#F97316', icon:'📅', items:[
+    {id:'wejf_sam',label:'Samedi travaillé',montant:60},
+    {id:'wejf_dim',label:'Dimanche travaillé',montant:80},
+    {id:'wejf_jf', label:'Jour férié',montant:120},
+  ]},
 ];
+const PRIMES=PRIME_CATS.flatMap(c=>c.items.map(i=>({...i,icon:c.icon,color:c.color})));
 const JOURS=['Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi','Dimanche'];
 
 // ══ HELPERS ══
@@ -164,14 +176,14 @@ const initJ=()=>({Lundi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60}}},Mardi:{o
 
 // ══ STATE ══
 const FICHES_INIT=[
-    {id:'f1',nom:'Marie Dupont',sem:14,an:2026,statut:'soumis',date:'2026-04-01',jours:{Lundi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60}}},Mardi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60}}},Mercredi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60}}},Jeudi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60}}},Vendredi:{on:true,t:{normal:{d:'08:00',f:'16:00',p:60}}},Samedi:{on:false,t:{}},Dimanche:{on:false,t:{}}},primes:[{id:'dep',q:2},{id:'astr',q:1}],note:'Intervention nocturne jeudi pour maintenance urgente.',noteR:''},
-    {id:'f2',nom:'Marie Dupont',sem:13,an:2026,statut:'refusé',date:'2026-03-25',jours:{Lundi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60}}},Mardi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60}}},Mercredi:{on:false,t:{}},Jeudi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60}}},Vendredi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60}}},Samedi:{on:false,t:{}},Dimanche:{on:false,t:{}}},primes:[{id:'dep',q:1}],note:'',noteR:"Heure de fin jeudi incorrecte, merci de corriger."},
-    {id:'f3',nom:'Thomas Bernard',sem:14,an:2026,statut:'soumis',date:'2026-04-01',jours:{Lundi:{on:true,t:{normal:{d:'07:00',f:'16:00',p:60}}},Mardi:{on:true,t:{normal:{d:'07:00',f:'16:00',p:60}}},Mercredi:{on:true,t:{normal:{d:'07:00',f:'16:00',p:60}}},Jeudi:{on:true,t:{normal:{d:'07:00',f:'16:00',p:60}}},Vendredi:{on:true,t:{normal:{d:'07:00',f:'16:00',p:60}}},Samedi:{on:true,t:{normal:{d:'08:00',f:'13:00',p:0}}},Dimanche:{on:false,t:{}}},primes:[{id:'wejf',q:1},{id:'dep',q:2}],note:'Intervention urgente samedi matin.',noteR:''},
-    {id:'f4',nom:'Sophie Martin',sem:14,an:2026,statut:'validé',date:'2026-03-30',dateSaisie:null,jours:{Lundi:{on:true,t:{normal:{d:'09:00',f:'18:00',p:60}}},Mardi:{on:true,t:{normal:{d:'09:00',f:'18:00',p:60}}},Mercredi:{on:true,t:{normal:{d:'09:00',f:'18:00',p:60}}},Jeudi:{on:true,t:{normal:{d:'09:00',f:'18:00',p:60}}},Vendredi:{on:true,t:{normal:{d:'09:00',f:'17:00',p:60}}},Samedi:{on:false,t:{}},Dimanche:{on:false,t:{}}},primes:[{id:'dep',q:3},{id:'astr',q:2}],note:'',noteR:'Validé, RAS.'},
-    {id:'f5',nom:'Lucas Petit',sem:13,an:2026,statut:'validé',date:'2026-03-24',dateSaisie:'2026-03-26',jours:{Lundi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60}}},Mardi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60}}},Mercredi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60}}},Jeudi:{on:false,t:{}},Vendredi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60}}},Samedi:{on:false,t:{}},Dimanche:{on:false,t:{}}},primes:[{id:'wejf',q:1}],note:'Absence maladie jeudi.',noteR:'Validé ✓'},
+    {id:'f1',nom:'Marie Dupont',sem:14,an:2026,statut:'soumis',date:'2026-04-01',jours:{Lundi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60}}},Mardi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60}}},Mercredi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60}}},Jeudi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60}}},Vendredi:{on:true,t:{normal:{d:'08:00',f:'16:00',p:60}}},Samedi:{on:false,t:{}},Dimanche:{on:false,t:{}}},primes:[{id:'dep_m',q:2},{id:'astr_sem',q:1}],note:'Intervention nocturne jeudi pour maintenance urgente.',noteR:''},
+    {id:'f2',nom:'Marie Dupont',sem:13,an:2026,statut:'refusé',date:'2026-03-25',jours:{Lundi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60}}},Mardi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60}}},Mercredi:{on:false,t:{}},Jeudi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60}}},Vendredi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60}}},Samedi:{on:false,t:{}},Dimanche:{on:false,t:{}}},primes:[{id:'dep_s',q:1}],note:'',noteR:"Heure de fin jeudi incorrecte, merci de corriger."},
+    {id:'f3',nom:'Thomas Bernard',sem:14,an:2026,statut:'soumis',date:'2026-04-01',jours:{Lundi:{on:true,t:{normal:{d:'07:00',f:'16:00',p:60}}},Mardi:{on:true,t:{normal:{d:'07:00',f:'16:00',p:60}}},Mercredi:{on:true,t:{normal:{d:'07:00',f:'16:00',p:60}}},Jeudi:{on:true,t:{normal:{d:'07:00',f:'16:00',p:60}}},Vendredi:{on:true,t:{normal:{d:'07:00',f:'16:00',p:60}}},Samedi:{on:true,t:{normal:{d:'08:00',f:'13:00',p:0}}},Dimanche:{on:false,t:{}}},primes:[{id:'wejf_sam',q:1},{id:'dep_m',q:2}],note:'Intervention urgente samedi matin.',noteR:''},
+    {id:'f4',nom:'Sophie Martin',sem:14,an:2026,statut:'validé',date:'2026-03-30',dateSaisie:null,jours:{Lundi:{on:true,t:{normal:{d:'09:00',f:'18:00',p:60}}},Mardi:{on:true,t:{normal:{d:'09:00',f:'18:00',p:60}}},Mercredi:{on:true,t:{normal:{d:'09:00',f:'18:00',p:60}}},Jeudi:{on:true,t:{normal:{d:'09:00',f:'18:00',p:60}}},Vendredi:{on:true,t:{normal:{d:'09:00',f:'17:00',p:60}}},Samedi:{on:false,t:{}},Dimanche:{on:false,t:{}}},primes:[{id:'dep_m',q:3},{id:'astr_sem',q:2}],note:'',noteR:'Validé, RAS.'},
+    {id:'f5',nom:'Lucas Petit',sem:13,an:2026,statut:'validé',date:'2026-03-24',dateSaisie:'2026-03-26',jours:{Lundi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60}}},Mardi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60}}},Mercredi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60}}},Jeudi:{on:false,t:{}},Vendredi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60}}},Samedi:{on:false,t:{}},Dimanche:{on:false,t:{}}},primes:[{id:'wejf_sam',q:1}],note:'Absence maladie jeudi.',noteR:'Validé ✓'},
 ];
 let S={
-  role:null,tab:0,view:'list',sel:null,fd:null,fs:0,refus:'',showRefus:false,
+  role:null,tab:0,view:'list',sel:null,fd:null,fs:0,refus:'',showRefus:false,openCat:null,
   fiches:JSON.parse(JSON.stringify(FICHES_INIT))
 };
 function resetData(){if(confirm('Supprimer toutes les fiches ?')){S.fiches=[];S.role=null;S.view='list';S.sel=null;R();}}
@@ -499,6 +511,23 @@ function renderFormS0(f){
         ${j.on&&totJ?`<span style="font-family:'JetBrains Mono',monospace;font-weight:700;font-size:13px;color:#6366F1">${fmtH(totJ)}</span>`:''}
       </div>
       ${j.on?`<div style="border-top:1px solid #F3F4F6;padding:12px 16px">${typesH}${addBtns?`<div><div style="font-size:10px;color:#9CA3AF;font-weight:600;margin-bottom:6px">Ajouter un type :</div><div style="display:flex;flex-wrap:wrap;gap:4px">${addBtns}</div></div>`:''}
+        <div style="margin-top:14px;padding-top:12px;border-top:1px dashed #E5E7EB">
+          <div style="font-size:11px;color:#6B7280;font-weight:700;margin-bottom:8px;letter-spacing:0.04em">PRIME :</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            ${PRIME_CATS.map(c=>{const open=S.openCat===jour+'|'+c.id;return `<button onclick="togCat('${jour}','${c.id}')" style="padding:7px 13px;border-radius:9px;border:1.5px solid ${open?c.color:'#E5E7EB'};background:${open?c.color+'1A':'white'};color:${open?c.color:'#374151'};font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">${c.label}</button>`;}).join('')}
+          </div>
+          ${S.openCat&&S.openCat.startsWith(jour+'|')?(()=>{const cat=PRIME_CATS.find(c=>c.id===S.openCat.split('|')[1]);if(!cat)return'';return `<div style="margin-top:10px;display:flex;flex-direction:column;gap:6px">
+            ${cat.items.map(it=>{const sel=f.primes.find(p=>p.id===it.id);const q=sel?sel.q:0;return `<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:#F9FAFB;border-radius:10px;border:1.5px solid ${q>0?cat.color:'transparent'}">
+              <span style="flex:1;font-size:13px;font-weight:600;color:#111">${it.label}</span>
+              <span style="font-size:11px;color:#9CA3AF;font-family:'JetBrains Mono',monospace">${it.montant}€</span>
+              <div class="stepper">
+                <button class="step-btn" onclick="updP('${it.id}',-1)" style="${q>0?`background:${cat.color};border-color:${cat.color};color:white`:''}">−</button>
+                <span style="font-family:'JetBrains Mono',monospace;font-weight:700;font-size:14px;min-width:16px;text-align:center;color:${q>0?cat.color:'#D1D5DB'}">${q}</span>
+                <button class="step-btn" onclick="updP('${it.id}',1)" style="background:${cat.color};border-color:${cat.color};color:white">+</button>
+              </div>
+            </div>`;}).join('')}
+          </div>`;})():''}
+        </div>
       </div>`:''}
     </div>`;
   }).join('')+`<button class="btn btn-dark" onclick="setFS(1)" style="margin-top:8px">Suivant — Primes →</button>`;
@@ -537,6 +566,7 @@ function togJ(j){const jd=S.fd.jours[j];jd.on=!jd.on;if(jd.on&&!Object.keys(jd.t
 function updH(j,tid,f,v){S.fd.jours[j].t[tid][f]=f==='p'?parseInt(v)||0:v;R();}
 function addT(j,tid){S.fd.jours[j].t[tid]={d:'',f:'',p:0};R();}
 function remT(j,tid){delete S.fd.jours[j].t[tid];R();}
+function togCat(jour,cid){const k=jour+'|'+cid;S.openCat=S.openCat===k?null:k;R();}
 function updP(id,d){const i=S.fd.primes.findIndex(p=>p.id===id);if(i>=0){S.fd.primes[i].q=Math.max(0,S.fd.primes[i].q+d);if(!S.fd.primes[i].q)S.fd.primes.splice(i,1);}else if(d>0)S.fd.primes.push({id,q:1});R();}
 function submitF(){const ni=$('ni');if(ni)S.fd.note=ni.value;const nf={...S.fd,statut:'soumis',date:new Date().toISOString().split('T')[0],noteR:''};S.fiches=[nf,...S.fiches.filter(f=>f.id!==nf.id)];S.view='list';S.fd=null;R();}
 
@@ -545,7 +575,7 @@ document.addEventListener('input',e=>{if(e.target.id==='ri')S.refus=e.target.val
 window.setRole=setRole;window.goHome=goHome;window.goList=goList;window.setTab=setTab;
 window.openF=openF;window.newFiche=newFiche;window.editFiche=editFiche;
 window.doVal=doVal;window.doRefus=doRefus;window.doSaisie=doSaisie;
-window.setFS=setFS;window.togJ=togJ;window.updH=updH;window.addT=addT;window.remT=remT;window.updP=updP;window.submitF=submitF;
+window.setFS=setFS;window.togJ=togJ;window.updH=updH;window.addT=addT;window.remT=remT;window.updP=updP;window.submitF=submitF;window.togCat=togCat;window.resetData=resetData;
 
 R();
 </script>
