@@ -168,11 +168,12 @@ const JOURS=['Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi','Dimanche'];
 const calcH=(d,f,p=0)=>{if(!d||!f)return 0;const[dh,dm]=d.split(':').map(Number);const[fh,fm]=f.split(':').map(Number);return Math.max(0,((fh*60+fm)-(dh*60+dm)-p)/60);};
 const fmtH=h=>{if(!h)return'—';const hh=Math.floor(h),mm=Math.round((h-hh)*60);return mm?`${hh}h${String(mm).padStart(2,'0')}`:`${hh}h00`;};
 const totF=f=>Object.values(f.jours).reduce((s,j)=>j.on?s+Object.values(j.t).reduce((a,v)=>a+calcH(v.d,v.f,v.p),0):s,0);
-const totP=f=>f.primes.reduce((s,p)=>{const d=PRIMES.find(x=>x.id===p.id);return s+(d?d.montant*p.q:0);},0);
+const aggP=f=>{const m={};Object.values(f.jours||{}).forEach(j=>{(j.primes||[]).forEach(p=>{m[p.id]=(m[p.id]||0)+p.q;});});(f.primes||[]).forEach(p=>{if(!m[p.id])m[p.id]=p.q;});return Object.entries(m).map(([id,q])=>({id,q}));};
+const totP=f=>aggP(f).reduce((s,p)=>{const d=PRIMES.find(x=>x.id===p.id);return s+(d?d.montant*p.q:0);},0);
 const semLbl=(n,y)=>{const j=new Date(y,0,4);const d=new Date(j);d.setDate(j.getDate()-(j.getDay()||7)+1+(n-1)*7);const e=new Date(d);e.setDate(d.getDate()+6);const f=dt=>dt.toLocaleDateString('fr-FR',{day:'numeric',month:'short'});return`${f(d)} – ${f(e)}`;};
 const bdg=s=>{const m={brouillon:{l:'Brouillon',bg:'#F3F4F6',c:'#6B7280'},soumis:{l:'En attente',bg:'#FEF3C7',c:'#D97706'},'validé':{l:'Validé',bg:'#D1FAE5',c:'#059669'},'refusé':{l:'Refusé',bg:'#FEE2E2',c:'#DC2626'}}[s]||{l:s,bg:'#F3F4F6',c:'#6B7280'};return`<span class="badge" style="background:${m.bg};color:${m.c}"><span style="width:5px;height:5px;border-radius:50%;background:${m.c};display:inline-block"></span>${m.l}</span>`;};
 const clone=v=>JSON.parse(JSON.stringify(v));
-const initJ=()=>({Lundi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60}}},Mardi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60}}},Mercredi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60}}},Jeudi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60}}},Vendredi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60}}},Samedi:{on:false,t:{}},Dimanche:{on:false,t:{}}});
+const initJ=()=>({Lundi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60}},primes:[]},Mardi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60}},primes:[]},Mercredi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60}},primes:[]},Jeudi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60}},primes:[]},Vendredi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60}},primes:[]},Samedi:{on:false,t:{},primes:[]},Dimanche:{on:false,t:{},primes:[]}});
 
 // ══ STATE ══
 const FICHES_INIT=[
@@ -375,7 +376,7 @@ function renderSaisies(){
 function renderFicheCard(f,mode=''){
   const rn=f.statut==='refusé'&&f.noteR?`<div style="margin-top:10px;padding:8px 12px;background:#FEF2F2;border-radius:8px;font-size:12px;color:#DC2626">⚠ ${f.noteR}</div>`:'';
   const leftC={soumis:'#F59E0B','validé':'#059669','refusé':'#DC2626',brouillon:'#9CA3AF'}[f.statut]||'#E5E7EB';
-  const primesBadges=f.primes.length?`<div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:8px">${f.primes.map(p=>{const d=PRIMES.find(x=>x.id===p.id);return d?`<span style="font-size:10px;font-weight:700;padding:3px 8px;border-radius:999px;background:${d.color}22;color:${d.color}">${d.icon} ${d.label} ×${p.q}</span>`:''}).join('')}</div>`:'';
+  const agg=aggP(f);const primesBadges=agg.length?`<div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:8px">${agg.map(p=>{const d=PRIMES.find(x=>x.id===p.id);return d?`<span style="font-size:10px;font-weight:700;padding:3px 8px;border-radius:999px;background:${d.color}22;color:${d.color}">${d.icon} ${d.label} ×${p.q}</span>`:''}).join('')}</div>`:'';
   const actions=mode==='resp'?`<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px" onclick="event.stopPropagation()"><button onclick="quickRefus('${f.id}')" style="padding:10px;border-radius:10px;border:1.5px solid #FECACA;background:#FEF2F2;color:#DC2626;font-weight:700;font-size:13px;cursor:pointer">✕ Refuser</button><button onclick="quickVal('${f.id}')" style="padding:10px;border-radius:10px;border:none;background:#059669;color:#fff;font-weight:700;font-size:13px;cursor:pointer">✓ Valider</button></div>`:mode==='assist'?`<button onclick="event.stopPropagation();quickSaisir('${f.id}')" style="margin-top:12px;padding:10px 16px;border-radius:10px;border:none;background:#D97706;color:#fff;font-weight:700;font-size:13px;cursor:pointer;width:100%">📝 Saisir dans la paie</button>`:'';
   return`<div class="card" onclick="openF('${f.id}')" style="border-left:4px solid ${leftC}">
     <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
@@ -417,10 +418,11 @@ function renderDetail(){
     </div>`;
   });
   let primesH='';
-  if(f.primes.length){
+  const aggD=aggP(f);
+  if(aggD.length){
     primesH=`<div class="sec-lbl" style="margin:16px 0 8px">Primes & indemnités</div>
     <div style="background:white;border-radius:14px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.05);margin-bottom:8px">
-      ${f.primes.map(p=>{const d=PRIMES.find(x=>x.id===p.id);return d?`<div style="padding:12px 16px;display:flex;align-items:center;gap:12px;border-bottom:1px solid #F9FAFB"><span style="font-size:18px">${d.icon}</span><div style="flex:1"><div style="font-size:13px;font-weight:600;color:#111">${d.label}</div><div style="font-size:11px;color:#9CA3AF">${p.q} × ${d.montant}€</div></div><span style="font-family:'JetBrains Mono',monospace;font-weight:700;font-size:14px;color:${d.color}">${d.montant*p.q}€</span></div>`:''}).join('')}
+      ${aggD.map(p=>{const d=PRIMES.find(x=>x.id===p.id);return d?`<div style="padding:12px 16px;display:flex;align-items:center;gap:12px;border-bottom:1px solid #F9FAFB"><span style="font-size:18px">${d.icon}</span><div style="flex:1"><div style="font-size:13px;font-weight:600;color:#111">${d.label}</div><div style="font-size:11px;color:#9CA3AF">${p.q} × ${d.montant}€</div></div><span style="font-family:'JetBrains Mono',monospace;font-weight:700;font-size:14px;color:${d.color}">${d.montant*p.q}€</span></div>`:''}).join('')}
     </div>`;
   }
   const noteH=f.note?`<div style="background:#F8F8FC;border-radius:12px;padding:14px;margin-top:8px;border-left:3px solid #6366F1"><div class="sec-lbl" style="margin-bottom:5px">Note intervenant</div><p style="font-size:13px;color:#4B5563;line-height:1.6;margin:0">${f.note}</p></div>`:'';
@@ -517,13 +519,13 @@ function renderFormS0(f){
             ${PRIME_CATS.map(c=>{const open=S.openCat===jour+'|'+c.id;return `<button onclick="togCat('${jour}','${c.id}')" style="padding:7px 13px;border-radius:9px;border:1.5px solid ${open?c.color:'#E5E7EB'};background:${open?c.color+'1A':'white'};color:${open?c.color:'#374151'};font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">${c.label}</button>`;}).join('')}
           </div>
           ${S.openCat&&S.openCat.startsWith(jour+'|')?(()=>{const cat=PRIME_CATS.find(c=>c.id===S.openCat.split('|')[1]);if(!cat)return'';return `<div style="margin-top:10px;display:flex;flex-direction:column;gap:6px">
-            ${cat.items.map(it=>{const sel=f.primes.find(p=>p.id===it.id);const q=sel?sel.q:0;return `<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:#F9FAFB;border-radius:10px;border:1.5px solid ${q>0?cat.color:'transparent'}">
+            ${cat.items.map(it=>{const jp=f.jours[jour].primes||[];const sel=jp.find(p=>p.id===it.id);const q=sel?sel.q:0;return `<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:#F9FAFB;border-radius:10px;border:1.5px solid ${q>0?cat.color:'transparent'}">
               <span style="flex:1;font-size:13px;font-weight:600;color:#111">${it.label}</span>
               <span style="font-size:11px;color:#9CA3AF;font-family:'JetBrains Mono',monospace">${it.montant}€</span>
               <div class="stepper">
-                <button class="step-btn" onclick="updP('${it.id}',-1)" style="${q>0?`background:${cat.color};border-color:${cat.color};color:white`:''}">−</button>
+                <button class="step-btn" onclick="updP('${jour}','${it.id}',-1)" style="${q>0?`background:${cat.color};border-color:${cat.color};color:white`:''}">−</button>
                 <span style="font-family:'JetBrains Mono',monospace;font-weight:700;font-size:14px;min-width:16px;text-align:center;color:${q>0?cat.color:'#D1D5DB'}">${q}</span>
-                <button class="step-btn" onclick="updP('${it.id}',1)" style="background:${cat.color};border-color:${cat.color};color:white">+</button>
+                <button class="step-btn" onclick="updP('${jour}','${it.id}',1)" style="background:${cat.color};border-color:${cat.color};color:white">+</button>
               </div>
             </div>`;}).join('')}
           </div>`;})():''}
@@ -533,29 +535,23 @@ function renderFormS0(f){
   }).join('')+`<button class="btn btn-dark" onclick="setFS(1)" style="margin-top:8px">Suivant — Primes →</button>`;
 }
 function renderFormS1(f,tp){
-  return PRIMES.map(pr=>{const sel=f.primes.find(p=>p.id===pr.id);const q=sel?sel.q:0;
-    return`<div class="prime-row" style="border-color:${q>0?pr.color:'transparent'}">
-      <span style="font-size:22px">${pr.icon}</span>
-      <div style="flex:1"><div style="font-weight:700;font-size:14px;color:#111">${pr.label}</div><div style="font-size:12px;color:#9CA3AF">${pr.montant}€/u</div></div>
-      <div class="stepper">
-        <button class="step-btn" onclick="updP('${pr.id}',-1)" style="${q>0?`background:${pr.color};border-color:${pr.color};color:white`:''}">−</button>
-        <span style="font-family:'JetBrains Mono',monospace;font-weight:700;font-size:15px;min-width:18px;text-align:center;color:${q>0?pr.color:'#D1D5DB'}">${q}</span>
-        <button class="step-btn" onclick="updP('${pr.id}',1)" style="background:${pr.color};border-color:${pr.color};color:white">+</button>
-      </div>
-      ${q>0?`<span style="font-family:'JetBrains Mono',monospace;font-weight:700;font-size:13px;color:${pr.color};min-width:40px;text-align:right">${pr.montant*q}€</span>`:''}
-    </div>`;
-  }).join('')+
+  const agg=aggP(f);
+  return (agg.length?agg.map(p=>{const d=PRIMES.find(x=>x.id===p.id);if(!d)return'';return`<div class="prime-row" style="border-color:${d.color}">
+      <span style="font-size:22px">${d.icon}</span>
+      <div style="flex:1"><div style="font-weight:700;font-size:14px;color:#111">${d.label}</div><div style="font-size:11px;color:#9CA3AF">${p.q} × ${d.montant}€</div></div>
+      <span style="font-family:'JetBrains Mono',monospace;font-weight:800;font-size:15px;color:${d.color}">${d.montant*p.q}€</span>
+    </div>`;}).join(''):'<div class="empty"><div class="empty-icon">💶</div><div class="empty-title">Aucune prime</div><div class="empty-sub">Les primes se saisissent par jour dans l\'étape Heures</div></div>')+
   (tp?`<div style="background:#0F0F14;border-radius:14px;padding:14px 20px;margin:8px 0;display:flex;justify-content:space-between;align-items:center"><span style="color:#6B7280;font-weight:600;font-size:13px">Total primes</span><span style="font-family:'JetBrains Mono',monospace;font-weight:800;font-size:20px;color:white">${tp}€</span></div>`:'')+
   `<button class="btn btn-dark" onclick="setFS(2)" style="margin-top:8px">Suivant — Résumé →</button>`;
 }
 function renderFormS2(f,tot,tp){
   const jr=JOURS.filter(j=>f.jours[j].on).map(j=>{const jd=f.jours[j];const tJ=Object.values(jd.t).reduce((s,v)=>s+(v.d&&v.f?calcH(v.d,v.f,v.p):0),0);return`<div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #F3F4F6"><span style="font-size:13px;color:#374151">${j}</span><span style="font-family:'JetBrains Mono',monospace;font-weight:700;font-size:13px">${fmtH(tJ)}</span></div>`;}).join('');
-  const pr=f.primes.map(p=>{const d=PRIMES.find(x=>x.id===p.id);return d?`<div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #F3F4F6"><span style="font-size:13px;color:#374151">${d.icon} ${d.label} ×${p.q}</span><span style="font-family:'JetBrains Mono',monospace;font-weight:700;font-size:13px;color:${d.color}">${d.montant*p.q}€</span></div>`:''}).join('');
+  const aggS=aggP(f);const pr=aggS.map(p=>{const d=PRIMES.find(x=>x.id===p.id);return d?`<div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #F3F4F6"><span style="font-size:13px;color:#374151">${d.icon} ${d.label} ×${p.q}</span><span style="font-family:'JetBrains Mono',monospace;font-weight:700;font-size:13px;color:${d.color}">${d.montant*p.q}€</span></div>`:''}).join('');
   return`<div style="background:white;border-radius:14px;padding:16px;margin-bottom:10px;box-shadow:0 1px 3px rgba(0,0,0,0.05)">
     <div class="sec-lbl" style="margin-bottom:10px">Heures</div>${jr}
     <div style="display:flex;justify-content:space-between;padding:10px 0 0"><span style="font-weight:700;font-size:13px">Total</span><span style="font-family:'JetBrains Mono',monospace;font-weight:800;font-size:15px">${fmtH(tot)}</span></div>
   </div>
-  ${f.primes.length?`<div style="background:white;border-radius:14px;padding:16px;margin-bottom:10px;box-shadow:0 1px 3px rgba(0,0,0,0.05)"><div class="sec-lbl" style="margin-bottom:10px">Primes</div>${pr}<div style="display:flex;justify-content:space-between;padding:10px 0 0"><span style="font-weight:700;font-size:13px">Total primes</span><span style="font-family:'JetBrains Mono',monospace;font-weight:800;font-size:15px;color:#059669">${tp}€</span></div></div>`:''}
+  ${aggS.length?`<div style="background:white;border-radius:14px;padding:16px;margin-bottom:10px;box-shadow:0 1px 3px rgba(0,0,0,0.05)"><div class="sec-lbl" style="margin-bottom:10px">Primes</div>${pr}<div style="display:flex;justify-content:space-between;padding:10px 0 0"><span style="font-weight:700;font-size:13px">Total primes</span><span style="font-family:'JetBrains Mono',monospace;font-weight:800;font-size:15px;color:#059669">${tp}€</span></div></div>`:''}
   <div style="margin-bottom:12px"><div class="sec-lbl" style="margin-bottom:8px">Commentaire (optionnel)</div><textarea class="inp" id="ni" placeholder="Informations pour votre responsable..." style="width:100%">${f.note||''}</textarea></div>
   <button class="btn btn-green" onclick="submitF()">✓ Envoyer au responsable — ${fmtH(tot)}</button>`;
 }
@@ -567,7 +563,7 @@ function updH(j,tid,f,v){S.fd.jours[j].t[tid][f]=f==='p'?parseInt(v)||0:v;R();}
 function addT(j,tid){S.fd.jours[j].t[tid]={d:'',f:'',p:0};R();}
 function remT(j,tid){delete S.fd.jours[j].t[tid];R();}
 function togCat(jour,cid){const k=jour+'|'+cid;S.openCat=S.openCat===k?null:k;R();}
-function updP(id,d){const i=S.fd.primes.findIndex(p=>p.id===id);if(i>=0){S.fd.primes[i].q=Math.max(0,S.fd.primes[i].q+d);if(!S.fd.primes[i].q)S.fd.primes.splice(i,1);}else if(d>0)S.fd.primes.push({id,q:1});R();}
+function updP(jour,id,d){const jd=S.fd.jours[jour];if(!jd.primes)jd.primes=[];const i=jd.primes.findIndex(p=>p.id===id);if(i>=0){jd.primes[i].q=Math.max(0,jd.primes[i].q+d);if(!jd.primes[i].q)jd.primes.splice(i,1);}else if(d>0)jd.primes.push({id,q:1});R();}
 function submitF(){const ni=$('ni');if(ni)S.fd.note=ni.value;const nf={...S.fd,statut:'soumis',date:new Date().toISOString().split('T')[0],noteR:''};S.fiches=[nf,...S.fiches.filter(f=>f.id!==nf.id)];S.view='list';S.fd=null;R();}
 
 // ══ DETAIL BIND ══
