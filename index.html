@@ -143,21 +143,12 @@ textarea.inp{resize:none;min-height:80px;font-family:'Outfit',sans-serif;font-si
 <script>
 // ══ DONNÉES ══
 const TYPES=[
-  {id:'normal',label:'Heures normales',     taux:100,color:'#6366F1'},
-  {id:'sup25', label:'Heures supp. +25%',   taux:125,color:'#8B5CF6'},
-  {id:'sup50', label:'Heures supp. +50%',   taux:150,color:'#EC4899'},
-  {id:'nuit',  label:'Heures de nuit +25%', taux:125,color:'#0891B2'},
-  {id:'ferie', label:'Jours fériés ×200%',  taux:200,color:'#DC2626'},
-  {id:'dim',   label:'Dimanche +50%',       taux:150,color:'#F97316'},
+  {id:'normal',label:'Heures normales',taux:100,color:'#6366F1'},
 ];
 const PRIMES=[
-  {id:'repas',label:'Panier repas', montant:15, icon:'🍽️',color:'#F59E0B'},
-  {id:'dep',  label:'Déplacement',  montant:100,icon:'🚗',color:'#3B82F6'},
-  {id:'A',    label:'Prime A',      montant:10, icon:'⭐',color:'#8B5CF6'},
-  {id:'B',    label:'Prime B',      montant:20, icon:'🌟',color:'#EC4899'},
-  {id:'C',    label:'Prime C',      montant:30, icon:'💫',color:'#10B981'},
-  {id:'D',    label:'Prime D',      montant:40, icon:'💎',color:'#F97316'},
-  {id:'E',    label:'Prime E',      montant:50, icon:'👑',color:'#EF4444'},
+  {id:'dep',    label:'Déplacement',  montant:100,icon:'🚗',color:'#3B82F6'},
+  {id:'astr',   label:'Astreinte',    montant:50, icon:'📟',color:'#8B5CF6'},
+  {id:'wejf',   label:'Week-End/JF',  montant:80, icon:'📅',color:'#F97316'},
 ];
 const JOURS=['Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi','Dimanche'];
 
@@ -173,11 +164,11 @@ const initJ=()=>({Lundi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60}}},Mardi:{o
 
 // ══ STATE ══
 const FICHES_INIT=[
-    {id:'f1',nom:'Marie Dupont',sem:14,an:2026,statut:'soumis',date:'2026-04-01',jours:{Lundi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60},sup25:{d:'17:00',f:'19:00',p:0}}},Mardi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60}}},Mercredi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60}}},Jeudi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60},nuit:{d:'22:00',f:'23:30',p:0}}},Vendredi:{on:true,t:{normal:{d:'08:00',f:'16:00',p:60}}},Samedi:{on:false,t:{}},Dimanche:{on:false,t:{}}},primes:[{id:'repas',q:5},{id:'dep',q:2},{id:'A',q:3}],note:'Intervention nocturne jeudi pour maintenance urgente.',noteR:''},
-    {id:'f2',nom:'Marie Dupont',sem:13,an:2026,statut:'refusé',date:'2026-03-25',jours:{Lundi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60}}},Mardi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60}}},Mercredi:{on:false,t:{}},Jeudi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60}}},Vendredi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60}}},Samedi:{on:false,t:{}},Dimanche:{on:false,t:{}}},primes:[{id:'repas',q:4}],note:'',noteR:"Heure de fin jeudi incorrecte, merci de corriger."},
-    {id:'f3',nom:'Thomas Bernard',sem:14,an:2026,statut:'soumis',date:'2026-04-01',jours:{Lundi:{on:true,t:{normal:{d:'07:00',f:'16:00',p:60}}},Mardi:{on:true,t:{normal:{d:'07:00',f:'16:00',p:60}}},Mercredi:{on:true,t:{normal:{d:'07:00',f:'16:00',p:60}}},Jeudi:{on:true,t:{normal:{d:'07:00',f:'16:00',p:60}}},Vendredi:{on:true,t:{normal:{d:'07:00',f:'16:00',p:60}}},Samedi:{on:true,t:{dim:{d:'08:00',f:'13:00',p:0}}},Dimanche:{on:false,t:{}}},primes:[{id:'repas',q:5},{id:'B',q:2},{id:'D',q:1}],note:'Intervention urgente samedi matin.',noteR:''},
-    {id:'f4',nom:'Sophie Martin',sem:14,an:2026,statut:'validé',date:'2026-03-30',dateSaisie:null,jours:{Lundi:{on:true,t:{normal:{d:'09:00',f:'18:00',p:60}}},Mardi:{on:true,t:{normal:{d:'09:00',f:'18:00',p:60},sup25:{d:'18:00',f:'19:30',p:0}}},Mercredi:{on:true,t:{normal:{d:'09:00',f:'18:00',p:60}}},Jeudi:{on:true,t:{normal:{d:'09:00',f:'18:00',p:60}}},Vendredi:{on:true,t:{normal:{d:'09:00',f:'17:00',p:60}}},Samedi:{on:false,t:{}},Dimanche:{on:false,t:{}}},primes:[{id:'repas',q:5},{id:'dep',q:3},{id:'C',q:1}],note:'',noteR:'Validé, RAS.'},
-    {id:'f5',nom:'Lucas Petit',sem:13,an:2026,statut:'validé',date:'2026-03-24',dateSaisie:'2026-03-26',jours:{Lundi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60}}},Mardi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60}}},Mercredi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60}}},Jeudi:{on:false,t:{}},Vendredi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60}}},Samedi:{on:false,t:{}},Dimanche:{on:false,t:{}}},primes:[{id:'repas',q:4},{id:'E',q:1}],note:'Absence maladie jeudi.',noteR:'Validé ✓'},
+    {id:'f1',nom:'Marie Dupont',sem:14,an:2026,statut:'soumis',date:'2026-04-01',jours:{Lundi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60}}},Mardi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60}}},Mercredi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60}}},Jeudi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60}}},Vendredi:{on:true,t:{normal:{d:'08:00',f:'16:00',p:60}}},Samedi:{on:false,t:{}},Dimanche:{on:false,t:{}}},primes:[{id:'dep',q:2},{id:'astr',q:1}],note:'Intervention nocturne jeudi pour maintenance urgente.',noteR:''},
+    {id:'f2',nom:'Marie Dupont',sem:13,an:2026,statut:'refusé',date:'2026-03-25',jours:{Lundi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60}}},Mardi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60}}},Mercredi:{on:false,t:{}},Jeudi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60}}},Vendredi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60}}},Samedi:{on:false,t:{}},Dimanche:{on:false,t:{}}},primes:[{id:'dep',q:1}],note:'',noteR:"Heure de fin jeudi incorrecte, merci de corriger."},
+    {id:'f3',nom:'Thomas Bernard',sem:14,an:2026,statut:'soumis',date:'2026-04-01',jours:{Lundi:{on:true,t:{normal:{d:'07:00',f:'16:00',p:60}}},Mardi:{on:true,t:{normal:{d:'07:00',f:'16:00',p:60}}},Mercredi:{on:true,t:{normal:{d:'07:00',f:'16:00',p:60}}},Jeudi:{on:true,t:{normal:{d:'07:00',f:'16:00',p:60}}},Vendredi:{on:true,t:{normal:{d:'07:00',f:'16:00',p:60}}},Samedi:{on:true,t:{normal:{d:'08:00',f:'13:00',p:0}}},Dimanche:{on:false,t:{}}},primes:[{id:'wejf',q:1},{id:'dep',q:2}],note:'Intervention urgente samedi matin.',noteR:''},
+    {id:'f4',nom:'Sophie Martin',sem:14,an:2026,statut:'validé',date:'2026-03-30',dateSaisie:null,jours:{Lundi:{on:true,t:{normal:{d:'09:00',f:'18:00',p:60}}},Mardi:{on:true,t:{normal:{d:'09:00',f:'18:00',p:60}}},Mercredi:{on:true,t:{normal:{d:'09:00',f:'18:00',p:60}}},Jeudi:{on:true,t:{normal:{d:'09:00',f:'18:00',p:60}}},Vendredi:{on:true,t:{normal:{d:'09:00',f:'17:00',p:60}}},Samedi:{on:false,t:{}},Dimanche:{on:false,t:{}}},primes:[{id:'dep',q:3},{id:'astr',q:2}],note:'',noteR:'Validé, RAS.'},
+    {id:'f5',nom:'Lucas Petit',sem:13,an:2026,statut:'validé',date:'2026-03-24',dateSaisie:'2026-03-26',jours:{Lundi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60}}},Mardi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60}}},Mercredi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60}}},Jeudi:{on:false,t:{}},Vendredi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60}}},Samedi:{on:false,t:{}},Dimanche:{on:false,t:{}}},primes:[{id:'wejf',q:1}],note:'Absence maladie jeudi.',noteR:'Validé ✓'},
 ];
 let S={
   role:null,tab:0,view:'list',sel:null,fd:null,fs:0,refus:'',showRefus:false,
