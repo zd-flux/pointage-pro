@@ -192,6 +192,8 @@ const ROLES={
     tabs:['FDS à saisir','FDS saisies']},
 };
 
+const DEMO_FICHES=clone(S.fiches);
+function resetDemo(){if(confirm('Réinitialiser toutes les données ?')){S.fiches=clone(DEMO_FICHES);S.role=null;S.view='list';S.tab=0;S.sel=null;R();}}
 const $=id=>document.getElementById(id);
 function R(){$('app').innerHTML=render();}
 
@@ -226,6 +228,7 @@ function renderLanding(){
           <button style="background:${c.color};color:#fff;border:none;border-radius:10px;padding:12px 22px;font-weight:600;font-size:14px;cursor:pointer;width:100%">Explorer</button>
         </div>`).join('')}
       </div>
+      <button onclick="resetDemo()" style="margin-top:28px;color:#9CA3AF;background:transparent;border:1px solid #E5E7EB;border-radius:8px;padding:6px 14px;font-size:11px;cursor:pointer;font-family:inherit">🗑 Réinitialiser les données de démo</button>
     </div>
   </div>`;
 }
