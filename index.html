@@ -209,19 +209,21 @@ function renderLanding(){
     {id:'assistante',  emoji:'📋',name:'Interface Assistante RH',desc:'Gérer les fiches à saisir et saisies',color:'#F59E0B',bg:'rgba(245,158,11,0.12)',tabs:['FDS à saisir','FDS saisies']},
   ];
   return`<div class="landing">
+    <div style="width:100%;background:rgba(245,158,11,0.15);border:1px solid rgba(245,158,11,0.5);color:#F59E0B;padding:12px 16px;border-radius:10px;text-align:center;font-weight:600;margin-bottom:20px">Mode démonstration — données simulées, non connectée</div>
     <div class="logo-wrap fu">
       <div class="logo-icon">⏱️</div>
       <div class="logo-title">PointagePro</div>
       <div class="logo-sub">Application de gestion des fiches de semaine</div>
     </div>
     <div style="width:100%">
-      <div class="choose-label fu1">Choisir votre interface</div>
+      <div class="choose-label fu1">Choisir l'interface à visualiser</div>
       ${cards.map((c,i)=>`
       <div class="iface-card fu${i+1}" onclick="setRole('${c.id}')">
         <div class="iface-icon-wrap" style="background:${c.bg}">${c.emoji}</div>
         <div class="iface-text">
           <div class="iface-name">${c.name}</div>
           <div class="iface-desc">${c.desc}</div>
+          <div style="font-size:11px;color:#94a3b8;margin:4px 0 6px">${c.tabs.length} onglets disponibles</div>
           <div class="iface-tabs">
             ${c.tabs.map(t=>`<span class="iface-tab-pill" style="background:${c.bg};color:${c.color}">${t}</span>`).join('')}
           </div>
@@ -229,7 +231,6 @@ function renderLanding(){
         <div class="iface-arrow">›</div>
       </div>`).join('')}
     </div>
-    <div class="demo-badge fu3"><span class="demo-dot"></span> Prototype de démonstration — données simulées</div>
   </div>`;
 }
 function setRole(r){S.role=r;S.tab=0;S.view='list';R();}
