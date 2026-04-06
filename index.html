@@ -172,16 +172,18 @@ const clone=v=>JSON.parse(JSON.stringify(v));
 const initJ=()=>({Lundi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60}}},Mardi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60}}},Mercredi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60}}},Jeudi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60}}},Vendredi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60}}},Samedi:{on:false,t:{}},Dimanche:{on:false,t:{}}});
 
 // ══ STATE ══
-let S={
-  role:null,tab:0,view:'list',sel:null,fd:null,fs:0,refus:'',showRefus:false,
-  fiches:[
+const FICHES_INIT=[
     {id:'f1',nom:'Marie Dupont',sem:14,an:2026,statut:'soumis',date:'2026-04-01',jours:{Lundi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60},sup25:{d:'17:00',f:'19:00',p:0}}},Mardi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60}}},Mercredi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60}}},Jeudi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60},nuit:{d:'22:00',f:'23:30',p:0}}},Vendredi:{on:true,t:{normal:{d:'08:00',f:'16:00',p:60}}},Samedi:{on:false,t:{}},Dimanche:{on:false,t:{}}},primes:[{id:'repas',q:5},{id:'dep',q:2},{id:'A',q:3}],note:'Intervention nocturne jeudi pour maintenance urgente.',noteR:''},
     {id:'f2',nom:'Marie Dupont',sem:13,an:2026,statut:'refusé',date:'2026-03-25',jours:{Lundi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60}}},Mardi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60}}},Mercredi:{on:false,t:{}},Jeudi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60}}},Vendredi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60}}},Samedi:{on:false,t:{}},Dimanche:{on:false,t:{}}},primes:[{id:'repas',q:4}],note:'',noteR:"Heure de fin jeudi incorrecte, merci de corriger."},
     {id:'f3',nom:'Thomas Bernard',sem:14,an:2026,statut:'soumis',date:'2026-04-01',jours:{Lundi:{on:true,t:{normal:{d:'07:00',f:'16:00',p:60}}},Mardi:{on:true,t:{normal:{d:'07:00',f:'16:00',p:60}}},Mercredi:{on:true,t:{normal:{d:'07:00',f:'16:00',p:60}}},Jeudi:{on:true,t:{normal:{d:'07:00',f:'16:00',p:60}}},Vendredi:{on:true,t:{normal:{d:'07:00',f:'16:00',p:60}}},Samedi:{on:true,t:{dim:{d:'08:00',f:'13:00',p:0}}},Dimanche:{on:false,t:{}}},primes:[{id:'repas',q:5},{id:'B',q:2},{id:'D',q:1}],note:'Intervention urgente samedi matin.',noteR:''},
     {id:'f4',nom:'Sophie Martin',sem:14,an:2026,statut:'validé',date:'2026-03-30',dateSaisie:null,jours:{Lundi:{on:true,t:{normal:{d:'09:00',f:'18:00',p:60}}},Mardi:{on:true,t:{normal:{d:'09:00',f:'18:00',p:60},sup25:{d:'18:00',f:'19:30',p:0}}},Mercredi:{on:true,t:{normal:{d:'09:00',f:'18:00',p:60}}},Jeudi:{on:true,t:{normal:{d:'09:00',f:'18:00',p:60}}},Vendredi:{on:true,t:{normal:{d:'09:00',f:'17:00',p:60}}},Samedi:{on:false,t:{}},Dimanche:{on:false,t:{}}},primes:[{id:'repas',q:5},{id:'dep',q:3},{id:'C',q:1}],note:'',noteR:'Validé, RAS.'},
     {id:'f5',nom:'Lucas Petit',sem:13,an:2026,statut:'validé',date:'2026-03-24',dateSaisie:'2026-03-26',jours:{Lundi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60}}},Mardi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60}}},Mercredi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60}}},Jeudi:{on:false,t:{}},Vendredi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60}}},Samedi:{on:false,t:{}},Dimanche:{on:false,t:{}}},primes:[{id:'repas',q:4},{id:'E',q:1}],note:'Absence maladie jeudi.',noteR:'Validé ✓'},
-  ]
+];
+let S={
+  role:null,tab:0,view:'list',sel:null,fd:null,fs:0,refus:'',showRefus:false,
+  fiches:JSON.parse(JSON.stringify(FICHES_INIT))
 };
+function resetData(){if(confirm('Réinitialiser toutes les données de démo ?')){S.fiches=JSON.parse(JSON.stringify(FICHES_INIT));S.role=null;S.view='list';S.sel=null;R();}}
 
 const ROLES={
   intervenant:{name:'Intervenant',user:'Marie Dupont',color:'#6366F1',emoji:'👷',
@@ -192,8 +194,6 @@ const ROLES={
     tabs:['FDS à saisir','FDS saisies']},
 };
 
-const DEMO_FICHES=clone(S.fiches);
-function resetDemo(){if(confirm('Réinitialiser toutes les données ?')){S.fiches=clone(DEMO_FICHES);S.role=null;S.view='list';S.tab=0;S.sel=null;R();}}
 const $=id=>document.getElementById(id);
 function R(){$('app').innerHTML=render();}
 
@@ -228,7 +228,7 @@ function renderLanding(){
           <button style="background:${c.color};color:#fff;border:none;border-radius:10px;padding:12px 22px;font-weight:600;font-size:14px;cursor:pointer;width:100%">Explorer</button>
         </div>`).join('')}
       </div>
-      <button onclick="resetDemo()" style="margin-top:28px;color:#9CA3AF;background:transparent;border:1px solid #E5E7EB;border-radius:8px;padding:6px 14px;font-size:11px;cursor:pointer;font-family:inherit">🗑 Réinitialiser les données de démo</button>
+      <button onclick="resetData()" style="margin-top:28px;color:#9CA3AF;background:transparent;border:1px solid #E5E7EB;border-radius:8px;padding:6px 14px;font-size:11px;cursor:pointer;font-family:inherit">🗑 Réinitialiser les données de démo</button>
     </div>
   </div>`;
 }
