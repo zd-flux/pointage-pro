@@ -183,7 +183,7 @@ let S={
   role:null,tab:0,view:'list',sel:null,fd:null,fs:0,refus:'',showRefus:false,
   fiches:JSON.parse(JSON.stringify(FICHES_INIT))
 };
-function resetData(){if(confirm('Réinitialiser toutes les données de démo ?')){S.fiches=JSON.parse(JSON.stringify(FICHES_INIT));S.role=null;S.view='list';S.sel=null;R();}}
+function resetData(){if(confirm('Supprimer toutes les fiches ?')){S.fiches=[];S.role=null;S.view='list';S.sel=null;R();}}
 
 const ROLES={
   intervenant:{name:'Intervenant',user:'Marie Dupont',color:'#6366F1',emoji:'👷',
