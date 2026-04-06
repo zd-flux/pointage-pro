@@ -208,13 +208,13 @@ function renderLanding(){
     {id:'responsable', emoji:'✅',name:'Interface Responsable', desc:'Saisir ses heures + valider celles de l\'équipe',color:'#059669',bg:'rgba(5,150,105,0.12)',tabs:['Faire ma FDS','Mes FDS','Valider les FDS']},
     {id:'assistante',  emoji:'📋',name:'Interface Assistante RH',desc:'Gérer les fiches à saisir et saisies',color:'#F59E0B',bg:'rgba(245,158,11,0.12)',tabs:['FDS à saisir','FDS saisies']},
   ];
-  return`<div style="position:fixed;inset:0;background:#fff;color:#0f172a;overflow-y:auto;font-family:inherit;z-index:9999">
-    <div style="max-width:420px;margin:0 auto;padding:32px 20px;display:flex;flex-direction:column;align-items:center">
+  return`<style>@media (max-width:600px){.landing-grid{grid-template-columns:1fr !important}.landing-wrap{max-width:420px !important}}</style><div style="position:fixed;inset:0;background:#fff;color:#0f172a;overflow-y:auto;font-family:inherit;z-index:9999">
+    <div class="landing-wrap" style="max-width:1040px;margin:0 auto;padding:32px 20px;display:flex;flex-direction:column;align-items:center">
       <div style="width:80px;height:80px;border-radius:20px;background:linear-gradient(135deg,#6366F1,#8B5CF6);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:24px;letter-spacing:1px;box-shadow:0 10px 30px rgba(99,102,241,0.35);margin-bottom:16px">FDS</div>
       <div style="font-size:28px;font-weight:800;color:#0f172a;margin-bottom:12px">Gestion FDS</div>
       <div style="background:#FEF3C7;color:#92400E;border:1px solid #FCD34D;padding:8px 16px;border-radius:999px;font-weight:600;font-size:12px;margin-bottom:24px;text-align:center">Mode démonstration — données simulées</div>
       <div style="font-size:15px;color:#475569;margin-bottom:20px">Choisissez un profil pour explorer</div>
-      <div style="display:flex;flex-direction:column;gap:14px;width:100%">
+      <div class="landing-grid" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;width:100%">
         ${cards.map(c=>`<div onclick="setRole('${c.id}')" style="background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:20px;cursor:pointer;box-shadow:0 4px 16px rgba(15,23,42,0.06);display:flex;flex-direction:column;align-items:center;text-align:center">
           <div style="width:60px;height:60px;border-radius:14px;background:${c.bg};display:flex;align-items:center;justify-content:center;font-size:28px;margin-bottom:12px">${c.emoji}</div>
           <div style="font-size:17px;font-weight:700;color:#0f172a;margin-bottom:6px">${c.name.replace('Interface ','')}</div>
