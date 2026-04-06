@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+<title>PointagePro</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{background:#0F0F14;font-family:'Outfit',sans-serif;min-height:100vh;overscroll-behavior:none;}
+#app{max-width:480px;margin:0 auto;min-height:100vh;}
+button{font-family:'Outfit',sans-serif;cursor:pointer;border:none;}
+input,select,textarea{font-family:'Outfit',sans-serif;}
+::-webkit-scrollbar{width:3px;}
+::-webkit-scrollbar-thumb{background:#333;border-radius:4px;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+@keyframes scaleIn{from{opacity:0;transform:scale(0.95);}to{opacity:1;transform:scale(1);}}
+.fu{animation:fadeUp 0.5s cubic-bezier(0.16,1,0.3,1) both;}
+.fu1{animation:fadeUp 0.5s cubic-bezier(0.16,1,0.3,1) 0.1s both;}
+.fu2{animation:fadeUp 0.5s cubic-bezier(0.16,1,0.3,1) 0.2s both;}
+.fu3{animation:fadeUp 0.5s cubic-bezier(0.16,1,0.3,1) 0.3s both;}
+.fi{animation:fadeIn 0.3s ease both;}
+.si{animation:scaleIn 0.35s cubic-bezier(0.16,1,0.3,1) both;}
+
+/* ── LANDING ── */
+.landing{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px;background:#0F0F14;position:relative;overflow:hidden;}
+.landing::before{content:'';position:absolute;top:-200px;left:50%;transform:translateX(-50%);width:600px;height:600px;background:radial-gradient(circle,rgba(99,102,241,0.12) 0%,transparent 70%);pointer-events:none;}
+.landing::after{content:'';position:absolute;bottom:-100px;right:-100px;width:300px;height:300px;background:radial-gradient(circle,rgba(236,72,153,0.08) 0%,transparent 70%);pointer-events:none;}
+.logo-wrap{text-align:center;margin-bottom:52px;}
+.logo-icon{width:80px;height:80px;background:linear-gradient(135deg,#6366F1,#8B5CF6);border-radius:24px;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:36px;box-shadow:0 20px 60px rgba(99,102,241,0.35);}
+.logo-title{font-size:36px;font-weight:900;color:white;letter-spacing:-1px;margin-bottom:8px;}
+.logo-sub{font-size:14px;color:#6B7280;font-weight:400;}
+.choose-label{font-size:11px;font-weight:700;color:#4B5563;letter-spacing:0.1em;text-transform:uppercase;text-align:center;margin-bottom:16px;}
+.iface-card{width:100%;background:#1A1A24;border:1px solid #252530;border-radius:20px;padding:22px 22px;margin-bottom:12px;display:flex;align-items:center;gap:16px;cursor:pointer;transition:all 0.2s;position:relative;overflow:hidden;}
+.iface-card::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity 0.2s;}
+.iface-card:hover{transform:translateY(-2px);border-color:#333340;box-shadow:0 8px 30px rgba(0,0,0,0.3);}
+.iface-card:hover::before{opacity:1;}
+.iface-card:active{transform:scale(0.98);}
+.iface-icon-wrap{width:52px;height:52px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;}
+.iface-text{flex:1;text-align:left;}
+.iface-name{font-size:17px;font-weight:800;color:white;margin-bottom:4px;}
+.iface-desc{font-size:12px;color:#6B7280;line-height:1.4;}
+.iface-tabs{display:flex;gap:4px;margin-top:10px;flex-wrap:wrap;}
+.iface-tab-pill{font-size:10px;font-weight:600;padding:3px 8px;border-radius:6px;letter-spacing:0.03em;}
+.iface-arrow{color:#374151;font-size:18px;flex-shrink:0;transition:transform 0.2s;}
+.iface-card:hover .iface-arrow{transform:translateX(3px);color:#6B7280;}
+.demo-badge{display:inline-flex;align-items:center;gap:6px;background:#1A1A24;border:1px solid #252530;border-radius:20px;padding:6px 14px;margin-top:20px;font-size:11px;color:#4B5563;}
+.demo-dot{width:6px;height:6px;border-radius:50%;background:#22C55E;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.4;}}
+
+/* ── APP SHELL ── */
+.shell{min-height:100vh;background:#F2F0EC;display:flex;flex-direction:column;}
+
+/* ── TOP BAR ── */
+.topbar{background:#0F0F14;padding:0 20px;display:flex;align-items:center;gap:12px;height:60px;position:sticky;top:0;z-index:100;border-bottom:1px solid #1A1A24;}
+.topbar-back{background:none;border:none;color:#6B7280;width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:10px;transition:background 0.15s;font-size:20px;}
+.topbar-back:hover{background:#1A1A24;}
+.topbar-info{flex:1;}
+.topbar-title{font-size:15px;font-weight:800;color:white;}
+.topbar-role{font-size:11px;color:#4B5563;margin-top:1px;}
+.topbar-avatar{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:white;flex-shrink:0;}
+
+/* ── BOTTOM TABS ── */
+.bottom-tabs{background:#0F0F14;border-top:1px solid #1A1A24;display:flex;position:sticky;bottom:0;z-index:100;}
+.tab-btn{flex:1;padding:10px 8px 12px;background:none;border:none;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;transition:all 0.15s;color:#4B5563;}
+.tab-btn.active{color:white;}
+.tab-btn-icon{font-size:20px;line-height:1;}
+.tab-btn-lbl{font-size:10px;font-weight:600;letter-spacing:0.02em;}
+.tab-indicator{height:2px;width:24px;border-radius:2px;margin-top:2px;background:transparent;transition:background 0.2s;}
+.tab-btn.active .tab-indicator{background:currentColor;}
+
+/* ── PAGE CONTENT ── */
+.page-content{flex:1;overflow-y:auto;padding:16px 16px 24px;}
+
+/* ── CARDS ── */
+.card{background:white;border-radius:16px;padding:16px;margin-bottom:10px;box-shadow:0 1px 3px rgba(0,0,0,0.06);cursor:pointer;transition:all 0.15s;border:1.5px solid transparent;}
+.card:hover{box-shadow:0 4px 16px rgba(0,0,0,0.1);transform:translateY(-1px);}
+.card:active{transform:scale(0.99);}
+.sec-lbl{font-size:11px;font-weight:700;color:#9CA3AF;letter-spacing:0.07em;text-transform:uppercase;margin-bottom:10px;}
+
+/* ── BADGE ── */
+.badge{font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;letter-spacing:0.06em;text-transform:uppercase;display:inline-flex;align-items:center;gap:5px;}
+
+/* ── KPI ── */
+.kpi-grid{display:grid;gap:8px;margin-bottom:20px;}
+.kpi-box{background:white;border-radius:14px;padding:14px 12px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,0.05);}
+
+/* ── FORM ── */
+.form-section{background:white;border-radius:16px;overflow:hidden;margin-bottom:10px;box-shadow:0 1px 3px rgba(0,0,0,0.05);}
+.form-section-hdr{padding:14px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;user-select:none;}
+.chkbox{width:24px;height:24px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:13px;font-weight:900;transition:all 0.2s;}
+.time-grid{display:grid;grid-template-columns:1fr 1fr 68px;gap:8px;}
+.inp-lbl{font-size:10px;color:#9CA3AF;font-weight:600;margin-bottom:4px;}
+.inp{width:100%;padding:9px 10px;border:1.5px solid #E5E7EB;border-radius:9px;font-size:14px;font-family:'JetBrains Mono',monospace;background:white;outline:none;color:#111;transition:border-color 0.15s;}
+.inp:focus{border-color:#6366F1;}
+select.inp{font-family:'Outfit',sans-serif;font-size:12px;-webkit-appearance:none;}
+textarea.inp{resize:none;min-height:80px;font-family:'Outfit',sans-serif;font-size:13px;line-height:1.6;}
+.type-block{padding:12px;background:#F8F8FC;border-radius:10px;margin-bottom:8px;border-left:3px solid #6366F1;}
+.prime-row{background:white;border-radius:14px;padding:14px 16px;margin-bottom:8px;box-shadow:0 1px 3px rgba(0,0,0,0.05);display:flex;align-items:center;gap:12px;border:1.5px solid transparent;transition:border-color 0.15s;}
+.stepper{display:flex;align-items:center;gap:8px;margin-left:auto;}
+.step-btn{width:30px;height:30px;border-radius:9px;border:1.5px solid #E5E7EB;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:700;cursor:pointer;transition:all 0.15s;background:white;line-height:1;color:#9CA3AF;}
+
+/* ── BUTTON ── */
+.btn{width:100%;padding:15px;border:none;border-radius:14px;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;transition:all 0.15s;font-family:'Outfit',sans-serif;}
+.btn:active{transform:scale(0.97);}
+.btn-dark{background:#0F0F14;color:white;box-shadow:0 4px 20px rgba(0,0,0,0.25);}
+.btn-green{background:#059669;color:white;box-shadow:0 4px 20px rgba(5,150,105,0.3);}
+.btn-red{background:#DC2626;color:white;box-shadow:0 4px 20px rgba(220,38,38,0.3);}
+.btn-ghost{background:#F3F4F6;color:#374151;}
+.btn-outline{background:white;color:#0F0F14;border:1.5px solid #E5E7EB;}
+
+/* ── DETAIL ── */
+.detail-hdr{background:#0F0F14;padding:20px 20px 24px;}
+.stat-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:16px;}
+.stat-box{background:rgba(255,255,255,0.06);border-radius:12px;padding:10px;text-align:center;}
+.stat-val{font-weight:800;font-size:17px;color:white;font-family:'JetBrains Mono',monospace;}
+.stat-lbl{font-size:10px;color:#4B5563;margin-top:2px;}
+
+/* ── STEP NAV (form) ── */
+.step-nav{display:flex;gap:6px;background:#E5E7EB;border-radius:12px;padding:4px;margin-bottom:16px;}
+.step-tab{flex:1;padding:8px;background:transparent;border:none;border-radius:9px;font-size:11px;font-weight:600;color:#9CA3AF;cursor:pointer;transition:all 0.2s;font-family:'Outfit',sans-serif;}
+.step-tab.on{background:white;color:#0F0F14;box-shadow:0 1px 4px rgba(0,0,0,0.1);}
+
+/* ── EMPTY STATE ── */
+.empty{text-align:center;padding:60px 20px;}
+.empty-icon{font-size:48px;margin-bottom:16px;}
+.empty-title{font-size:16px;font-weight:700;color:#374151;margin-bottom:6px;}
+.empty-sub{font-size:13px;color:#9CA3AF;}
+
+/* ── FAB ── */
+.fab-wrap{position:sticky;bottom:72px;padding:0 16px 12px;background:linear-gradient(transparent,#F2F0EC 50%);}
+
+/* ── ALERT ── */
+.alert{border-radius:12px;padding:12px 16px;margin-bottom:14px;display:flex;align-items:center;gap:10px;font-size:13px;font-weight:600;}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+// ══ DONNÉES ══
+const TYPES=[
+  {id:'normal',label:'Heures normales',     taux:100,color:'#6366F1'},
+  {id:'sup25', label:'Heures supp. +25%',   taux:125,color:'#8B5CF6'},
+  {id:'sup50', label:'Heures supp. +50%',   taux:150,color:'#EC4899'},
+  {id:'nuit',  label:'Heures de nuit +25%', taux:125,color:'#0891B2'},
+  {id:'ferie', label:'Jours fériés ×200%',  taux:200,color:'#DC2626'},
+  {id:'dim',   label:'Dimanche +50%',       taux:150,color:'#F97316'},
+];
+const PRIMES=[
+  {id:'repas',label:'Panier repas', montant:15, icon:'🍽️',color:'#F59E0B'},
+  {id:'dep',  label:'Déplacement',  montant:100,icon:'🚗',color:'#3B82F6'},
+  {id:'A',    label:'Prime A',      montant:10, icon:'⭐',color:'#8B5CF6'},
+  {id:'B',    label:'Prime B',      montant:20, icon:'🌟',color:'#EC4899'},
+  {id:'C',    label:'Prime C',      montant:30, icon:'💫',color:'#10B981'},
+  {id:'D',    label:'Prime D',      montant:40, icon:'💎',color:'#F97316'},
+  {id:'E',    label:'Prime E',      montant:50, icon:'👑',color:'#EF4444'},
+];
+const JOURS=['Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi','Dimanche'];
+
+// ══ HELPERS ══
+const calcH=(d,f,p=0)=>{if(!d||!f)return 0;const[dh,dm]=d.split(':').map(Number);const[fh,fm]=f.split(':').map(Number);return Math.max(0,((fh*60+fm)-(dh*60+dm)-p)/60);};
+const fmtH=h=>{if(!h)return'—';const hh=Math.floor(h),mm=Math.round((h-hh)*60);return mm?`${hh}h${String(mm).padStart(2,'0')}`:`${hh}h00`;};
+const totF=f=>Object.values(f.jours).reduce((s,j)=>j.on?s+Object.values(j.t).reduce((a,v)=>a+calcH(v.d,v.f,v.p),0):s,0);
+const totP=f=>f.primes.reduce((s,p)=>{const d=PRIMES.find(x=>x.id===p.id);return s+(d?d.montant*p.q:0);},0);
+const semLbl=(n,y)=>{const j=new Date(y,0,4);const d=new Date(j);d.setDate(j.getDate()-(j.getDay()||7)+1+(n-1)*7);const e=new Date(d);e.setDate(d.getDate()+6);const f=dt=>dt.toLocaleDateString('fr-FR',{day:'numeric',month:'short'});return`${f(d)} – ${f(e)}`;};
+const bdg=s=>{const m={brouillon:{l:'Brouillon',bg:'#F3F4F6',c:'#6B7280'},soumis:{l:'En attente',bg:'#FEF3C7',c:'#D97706'},'validé':{l:'Validé',bg:'#D1FAE5',c:'#059669'},'refusé':{l:'Refusé',bg:'#FEE2E2',c:'#DC2626'}}[s]||{l:s,bg:'#F3F4F6',c:'#6B7280'};return`<span class="badge" style="background:${m.bg};color:${m.c}"><span style="width:5px;height:5px;border-radius:50%;background:${m.c};display:inline-block"></span>${m.l}</span>`;};
+const clone=v=>JSON.parse(JSON.stringify(v));
+const initJ=()=>({Lundi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60}}},Mardi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60}}},Mercredi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60}}},Jeudi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60}}},Vendredi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60}}},Samedi:{on:false,t:{}},Dimanche:{on:false,t:{}}});
+
+// ══ STATE ══
+let S={
+  role:null,tab:0,view:'list',sel:null,fd:null,fs:0,refus:'',showRefus:false,
+  fiches:[
+    {id:'f1',nom:'Marie Dupont',sem:14,an:2026,statut:'soumis',date:'2026-04-01',jours:{Lundi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60},sup25:{d:'17:00',f:'19:00',p:0}}},Mardi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60}}},Mercredi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60}}},Jeudi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60},nuit:{d:'22:00',f:'23:30',p:0}}},Vendredi:{on:true,t:{normal:{d:'08:00',f:'16:00',p:60}}},Samedi:{on:false,t:{}},Dimanche:{on:false,t:{}}},primes:[{id:'repas',q:5},{id:'dep',q:2},{id:'A',q:3}],note:'Intervention nocturne jeudi pour maintenance urgente.',noteR:''},
+    {id:'f2',nom:'Marie Dupont',sem:13,an:2026,statut:'refusé',date:'2026-03-25',jours:{Lundi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60}}},Mardi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60}}},Mercredi:{on:false,t:{}},Jeudi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60}}},Vendredi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60}}},Samedi:{on:false,t:{}},Dimanche:{on:false,t:{}}},primes:[{id:'repas',q:4}],note:'',noteR:"Heure de fin jeudi incorrecte, merci de corriger."},
+    {id:'f3',nom:'Thomas Bernard',sem:14,an:2026,statut:'soumis',date:'2026-04-01',jours:{Lundi:{on:true,t:{normal:{d:'07:00',f:'16:00',p:60}}},Mardi:{on:true,t:{normal:{d:'07:00',f:'16:00',p:60}}},Mercredi:{on:true,t:{normal:{d:'07:00',f:'16:00',p:60}}},Jeudi:{on:true,t:{normal:{d:'07:00',f:'16:00',p:60}}},Vendredi:{on:true,t:{normal:{d:'07:00',f:'16:00',p:60}}},Samedi:{on:true,t:{dim:{d:'08:00',f:'13:00',p:0}}},Dimanche:{on:false,t:{}}},primes:[{id:'repas',q:5},{id:'B',q:2},{id:'D',q:1}],note:'Intervention urgente samedi matin.',noteR:''},
+    {id:'f4',nom:'Sophie Martin',sem:14,an:2026,statut:'validé',date:'2026-03-30',dateSaisie:null,jours:{Lundi:{on:true,t:{normal:{d:'09:00',f:'18:00',p:60}}},Mardi:{on:true,t:{normal:{d:'09:00',f:'18:00',p:60},sup25:{d:'18:00',f:'19:30',p:0}}},Mercredi:{on:true,t:{normal:{d:'09:00',f:'18:00',p:60}}},Jeudi:{on:true,t:{normal:{d:'09:00',f:'18:00',p:60}}},Vendredi:{on:true,t:{normal:{d:'09:00',f:'17:00',p:60}}},Samedi:{on:false,t:{}},Dimanche:{on:false,t:{}}},primes:[{id:'repas',q:5},{id:'dep',q:3},{id:'C',q:1}],note:'',noteR:'Validé, RAS.'},
+    {id:'f5',nom:'Lucas Petit',sem:13,an:2026,statut:'validé',date:'2026-03-24',dateSaisie:'2026-03-26',jours:{Lundi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60}}},Mardi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60}}},Mercredi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60}}},Jeudi:{on:false,t:{}},Vendredi:{on:true,t:{normal:{d:'08:00',f:'17:00',p:60}}},Samedi:{on:false,t:{}},Dimanche:{on:false,t:{}}},primes:[{id:'repas',q:4},{id:'E',q:1}],note:'Absence maladie jeudi.',noteR:'Validé ✓'},
+  ]
+};
+
+const ROLES={
+  intervenant:{name:'Intervenant',user:'Marie Dupont',color:'#6366F1',emoji:'👷',
+    tabs:['Faire ma FDS','Mes FDS']},
+  responsable:{name:'Responsable',user:'Jean Martin',color:'#059669',emoji:'✅',
+    tabs:['Faire ma FDS','Mes FDS','Valider les FDS']},
+  assistante:{name:'Assistante RH',user:'Claire Dubois',color:'#F59E0B',emoji:'📋',
+    tabs:['FDS à saisir','FDS saisies']},
+};
+
+const $=id=>document.getElementById(id);
+function R(){$('app').innerHTML=render();}
+
+// ══ MAIN RENDER ══
+function render(){
+  if(!S.role) return renderLanding();
+  const r=ROLES[S.role];
+  if(S.view==='detail') return renderShell(renderDetail());
+  if(S.view==='form')   return renderShell(renderForm(),true);
+  return renderShell(renderTabContent());
+}
+
+// ══ LANDING ══
+function renderLanding(){
+  const cards=[
+    {id:'intervenant',emoji:'👷',name:'Interface Intervenant',desc:'Saisir ses heures et consulter ses fiches',color:'#6366F1',bg:'rgba(99,102,241,0.12)',tabs:['Faire ma FDS','Mes FDS validées / refusées']},
+    {id:'responsable', emoji:'✅',name:'Interface Responsable', desc:'Saisir ses heures + valider celles de l\'équipe',color:'#059669',bg:'rgba(5,150,105,0.12)',tabs:['Faire ma FDS','Mes FDS','Valider les FDS']},
+    {id:'assistante',  emoji:'📋',name:'Interface Assistante RH',desc:'Gérer les fiches à saisir et saisies',color:'#F59E0B',bg:'rgba(245,158,11,0.12)',tabs:['FDS à saisir','FDS saisies']},
+  ];
+  return`<div class="landing">
+    <div class="logo-wrap fu">
+      <div class="logo-icon">⏱️</div>
+      <div class="logo-title">PointagePro</div>
+      <div class="logo-sub">Application de gestion des fiches de semaine</div>
+    </div>
+    <div style="width:100%">
+      <div class="choose-label fu1">Choisir votre interface</div>
+      ${cards.map((c,i)=>`
+      <div class="iface-card fu${i+1}" onclick="setRole('${c.id}')">
+        <div class="iface-icon-wrap" style="background:${c.bg}">${c.emoji}</div>
+        <div class="iface-text">
+          <div class="iface-name">${c.name}</div>
+          <div class="iface-desc">${c.desc}</div>
+          <div class="iface-tabs">
+            ${c.tabs.map(t=>`<span class="iface-tab-pill" style="background:${c.bg};color:${c.color}">${t}</span>`).join('')}
+          </div>
+        </div>
+        <div class="iface-arrow">›</div>
+      </div>`).join('')}
+    </div>
+    <div class="demo-badge fu3"><span class="demo-dot"></span> Prototype de démonstration — données simulées</div>
+  </div>`;
+}
+function setRole(r){S.role=r;S.tab=0;S.view='list';R();}
+
+// ══ SHELL (app frame) ══
+function renderShell(content,isForm=false){
+  const r=ROLES[S.role];
+  const tabs=r.tabs.map((t,i)=>`
+    <button class="tab-btn${S.tab===i&&!isForm?' active':''}" onclick="setTab(${i})">
+      <div class="tab-btn-icon">${getTabIcon(S.role,i)}</div>
+      <div class="tab-btn-lbl">${t}</div>
+      <div class="tab-indicator"></div>
+    </button>`).join('');
+  return`<div class="shell">
+    <div class="topbar">
+      <button class="topbar-back" onclick="${S.view!=='list'?'goList()':'goHome()'}">${S.view!=='list'?'←':'⬅'}</button>
+      <div class="topbar-info">
+        <div class="topbar-title">${S.view==='form'?'Nouvelle fiche de semaine':S.view==='detail'?`Semaine ${S.sel?.sem}`:r.tabs[S.tab]}</div>
+        <div class="topbar-role">${r.user} · ${r.name}</div>
+      </div>
+      <div class="topbar-avatar" style="background:${r.color}">${r.user[0]}</div>
+    </div>
+    <div class="page-content fi">${content}</div>
+    ${!isForm&&S.view!=='detail'?`<div class="bottom-tabs">${tabs}</div>`:''}
+  </div>`;
+}
+function getTabIcon(role,i){
+  const icons={
+    intervenant:['✏️','📄'],
+    responsable:['✏️','📄','🔍'],
+    assistante:['⏳','✅'],
+  };
+  return(icons[role]||[])[i]||'•';
+}
+function goHome(){S.role=null;S.view='list';S.tab=0;R();}
+function goList(){S.view='list';S.sel=null;S.showRefus=false;R();}
+function setTab(i){S.tab=i;S.view='list';R();}
+
+// ══ TAB CONTENT ROUTER ══
+function renderTabContent(){
+  if(S.role==='intervenant'){
+    return S.tab===0?renderFaireFDS():renderMesFDS();
+  }
+  if(S.role==='responsable'){
+    if(S.tab===0)return renderFaireFDS();
+    if(S.tab===1)return renderMesFDS();
+    return renderValiderFDS();
+  }
+  if(S.role==='assistante'){
+    return S.tab===0?renderASaisir():renderSaisies();
+  }
+  return '';
+}
+
+// ══ FAIRE MA FDS ══
+function renderFaireFDS(){
+  const myF=S.fiches.filter(f=>f.nom===(S.role==='responsable'?'Jean Martin':'Marie Dupont')).slice(0,2);
+  return`<div>
+    <div style="background:linear-gradient(135deg,#6366F1,#8B5CF6);border-radius:18px;padding:20px;margin-bottom:16px;color:white">
+      <div style="font-size:12px;color:rgba(255,255,255,0.6);margin-bottom:4px">Semaine en cours</div>
+      <div style="font-size:22px;font-weight:900;margin-bottom:4px">Semaine 15</div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.7)">${semLbl(15,2026)}</div>
+      <button class="btn" onclick="newFiche()" style="background:white;color:#6366F1;margin-top:16px;border-radius:12px;padding:12px;font-size:14px">✏️ Remplir ma fiche</button>
+    </div>
+    <div class="sec-lbl">Dernières fiches soumises</div>
+    ${myF.length?myF.map(f=>renderFicheCard(f)).join(''):'<div class="empty"><div class="empty-icon">📝</div><div class="empty-title">Aucune fiche</div><div class="empty-sub">Créez votre première fiche de semaine</div></div>'}
+  </div>`;
+}
+
+// ══ MES FDS ══
+function renderMesFDS(){
+  const nom=S.role==='responsable'?'Jean Martin':'Marie Dupont';
+  const all=S.fiches.filter(f=>f.nom===nom);
+  const counts={s:all.filter(f=>f.statut==='soumis').length,v:all.filter(f=>f.statut==='validé').length,r:all.filter(f=>f.statut==='refusé').length};
+  return`<div>
+    <div class="kpi-grid" style="grid-template-columns:1fr 1fr 1fr">
+      <div class="kpi-box"><div style="font-size:28px;font-weight:900;color:#F59E0B;font-family:'JetBrains Mono',monospace">${counts.s}</div><div style="font-size:10px;color:#9CA3AF">En attente</div></div>
+      <div class="kpi-box"><div style="font-size:28px;font-weight:900;color:#059669;font-family:'JetBrains Mono',monospace">${counts.v}</div><div style="font-size:10px;color:#9CA3AF">Validées</div></div>
+      <div class="kpi-box"><div style="font-size:28px;font-weight:900;color:#DC2626;font-family:'JetBrains Mono',monospace">${counts.r}</div><div style="font-size:10px;color:#9CA3AF">Refusées</div></div>
+    </div>
+    <div class="sec-lbl">Toutes mes fiches</div>
+    ${all.length?all.map(f=>renderFicheCard(f)).join(''):'<div class="empty"><div class="empty-icon">📄</div><div class="empty-title">Aucune fiche</div></div>'}
+  </div>`;
+}
+
+// ══ VALIDER FDS (Responsable) ══
+function renderValiderFDS(){
+  const pen=S.fiches.filter(f=>f.statut==='soumis');
+  return`<div>
+    ${pen.length?`<div class="alert" style="background:#FFFBEB;border:1px solid #FDE68A;color:#92400E">⚠️ ${pen.length} fiche${pen.length>1?'s':''} en attente de validation</div>`:''}
+    ${pen.length?pen.map(f=>renderFicheCard(f,'resp')).join(''):`<div class="empty"><div class="empty-icon">🎉</div><div class="empty-title">Tout est validé !</div><div class="empty-sub">Aucune fiche en attente</div></div>`}
+  </div>`;
+}
+
+// ══ ASSISTANTE ══
+function renderASaisir(){
+  const ts=S.fiches.filter(f=>f.statut==='validé'&&!f.dateSaisie);
+  return`<div>
+    ${ts.length?`<div class="alert" style="background:#FEF3C7;border:1px solid #FDE68A;color:#92400E">📋 ${ts.length} fiche${ts.length>1?'s':''} à saisir dans le logiciel de paie</div>`:''}
+    ${ts.length?ts.map(f=>renderFicheCard(f,'assist')).join(''):`<div class="empty"><div class="empty-icon">✅</div><div class="empty-title">Tout est à jour !</div><div class="empty-sub">Aucune fiche à saisir</div></div>`}
+  </div>`;
+}
+function renderSaisies(){
+  const ss=S.fiches.filter(f=>f.statut==='validé'&&f.dateSaisie);
+  return`<div>
+    <div class="kpi-grid" style="grid-template-columns:1fr 1fr">
+      <div class="kpi-box"><div style="font-size:32px;font-weight:900;color:#059669;font-family:'JetBrains Mono',monospace">${ss.length}</div><div style="font-size:10px;color:#9CA3AF">Saisies ce mois</div></div>
+      <div class="kpi-box"><div style="font-size:32px;font-weight:900;color:#6366F1;font-family:'JetBrains Mono',monospace">${S.fiches.filter(f=>f.statut==='validé'&&!f.dateSaisie).length}</div><div style="font-size:10px;color:#9CA3AF">Restantes</div></div>
+    </div>
+    <div class="sec-lbl">FDS déjà saisies</div>
+    ${ss.length?ss.map(f=>`<div class="card" onclick="openF('${f.id}')" style="opacity:0.7">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div><div style="font-weight:800;font-size:15px;color:#111">${f.nom}</div><div style="font-size:12px;color:#9CA3AF">Sem. ${f.sem} — Saisi le ${f.dateSaisie}</div></div>
+        <span style="color:#059669">✓</span>
+      </div></div>`).join(''):`<div class="empty"><div class="empty-icon">📋</div><div class="empty-title">Aucune fiche saisie</div></div>`}
+  </div>`;
+}
+
+// ══ FICHE CARD ══
+function renderFicheCard(f,mode=''){
+  const rn=f.statut==='refusé'&&f.noteR?`<div style="margin-top:10px;padding:8px 12px;background:#FEF2F2;border-radius:8px;font-size:12px;color:#DC2626">⚠ ${f.noteR}</div>`:'';
+  return`<div class="card" onclick="openF('${f.id}')" style="border-color:${f.statut==='refusé'?'#FECACA':f.statut==='validé'&&mode==='assist'?'#6EE7B7':'transparent'}">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
+      <div>
+        ${mode==='resp'||mode==='assist'?`<div style="font-weight:800;font-size:15px;color:#111">${f.nom}</div>`:''}
+        <div style="font-weight:${mode?600:800};font-size:${mode?13:15}px;color:#${mode?'6B7280':'111'}">Semaine ${f.sem}</div>
+        <div style="font-size:11px;color:#9CA3AF;margin-top:1px">${semLbl(f.sem,f.an)}</div>
+      </div>${bdg(f.statut)}
+    </div>
+    <div style="display:flex;gap:12px;align-items:center;font-size:13px">
+      <span style="font-weight:700;color:#111;font-family:'JetBrains Mono',monospace">⏱ ${fmtH(totF(f))}</span>
+      ${f.primes.length?`<span style="font-size:12px;color:#9CA3AF">${f.primes.length} prime${f.primes.length>1?'s':''}</span>`:''}
+      ${totP(f)?`<span style="font-size:12px;color:#9CA3AF">${totP(f)}€</span>`:''}
+      <span style="margin-left:auto;font-size:11px;color:#C4C7CE">${f.date}</span>
+    </div>${rn}
+  </div>`;
+}
+function openF(id){S.sel=S.fiches.find(f=>f.id===id);S.view='detail';R();}
+
+// ══ DETAIL ══
+function renderDetail(){
+  const f=S.sel;
+  const tot=totF(f);const tp=totP(f);const nbJ=Object.values(f.jours).filter(j=>j.on).length;
+  let joursH='';
+  JOURS.forEach(jour=>{
+    const j=f.jours[jour];if(!j.on)return;
+    const ents=Object.entries(j.t).filter(([,v])=>v.d&&v.f);
+    if(!ents.length)return;
+    const totJ=ents.reduce((s,[,v])=>s+calcH(v.d,v.f,v.p),0);
+    joursH+=`<div style="background:white;border-radius:14px;padding:14px 16px;margin-bottom:8px;box-shadow:0 1px 3px rgba(0,0,0,0.05)">
+      <div style="display:flex;justify-content:space-between;margin-bottom:${ents.length?8:0}px">
+        <span style="font-weight:700;font-size:14px;color:#111">${jour}</span>
+        <span style="font-family:'JetBrains Mono',monospace;font-weight:700;font-size:13px">${fmtH(totJ)}</span>
+      </div>
+      ${ents.map(([tid,v])=>{const d=TYPES.find(t=>t.id===tid);const h=calcH(v.d,v.f,v.p);return d?`<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-top:1px solid #F3F4F6"><span style="width:6px;height:6px;border-radius:50%;background:${d.color};flex-shrink:0"></span><span style="font-size:12px;color:#6B7280;flex:1">${d.label}</span><span style="font-size:11px;color:#9CA3AF;font-family:'JetBrains Mono',monospace">${v.d}→${v.f}</span><span style="font-size:12px;font-weight:700;color:${d.color};font-family:'JetBrains Mono',monospace;min-width:36px;text-align:right">${fmtH(h)}</span></div>`:''}).join('')}
+    </div>`;
+  });
+  let primesH='';
+  if(f.primes.length){
+    primesH=`<div class="sec-lbl" style="margin:16px 0 8px">Primes & indemnités</div>
+    <div style="background:white;border-radius:14px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.05);margin-bottom:8px">
+      ${f.primes.map(p=>{const d=PRIMES.find(x=>x.id===p.id);return d?`<div style="padding:12px 16px;display:flex;align-items:center;gap:12px;border-bottom:1px solid #F9FAFB"><span style="font-size:18px">${d.icon}</span><div style="flex:1"><div style="font-size:13px;font-weight:600;color:#111">${d.label}</div><div style="font-size:11px;color:#9CA3AF">${p.q} × ${d.montant}€</div></div><span style="font-family:'JetBrains Mono',monospace;font-weight:700;font-size:14px;color:${d.color}">${d.montant*p.q}€</span></div>`:''}).join('')}
+    </div>`;
+  }
+  const noteH=f.note?`<div style="background:#F8F8FC;border-radius:12px;padding:14px;margin-top:8px;border-left:3px solid #6366F1"><div class="sec-lbl" style="margin-bottom:5px">Note intervenant</div><p style="font-size:13px;color:#4B5563;line-height:1.6;margin:0">${f.note}</p></div>`:'';
+  const noteRH=f.noteR?`<div style="background:${f.statut==='refusé'?'#FFF5F5':'#F0FDF4'};border-radius:12px;padding:14px;margin-top:8px;border-left:3px solid ${f.statut==='refusé'?'#FCA5A5':'#6EE7B7'}"><div class="sec-lbl" style="margin-bottom:5px;color:${f.statut==='refusé'?'#EF4444':'#059669'}">Commentaire responsable</div><p style="font-size:13px;color:#4B5563;line-height:1.6;margin:0">${f.noteR}</p></div>`:'';
+
+  let actH='';
+  if(S.role==='intervenant'&&f.statut==='refusé')actH=`<button class="btn btn-dark" onclick="editFiche()" style="margin-top:16px">✏️ Modifier et renvoyer</button>`;
+  if(S.role==='responsable'&&f.statut==='soumis'){
+    actH=S.showRefus?`<div style="background:white;border-radius:14px;padding:16px;margin-top:16px">
+      <div class="sec-lbl" style="color:#DC2626;margin-bottom:8px">Motif du refus</div>
+      <textarea class="inp" id="ri" placeholder="Expliquer le problème à l'intervenant..." style="width:100%;margin-bottom:10px">${S.refus}</textarea>
+      <div style="display:flex;gap:8px"><button class="btn btn-ghost" onclick="S.showRefus=false;R()" style="flex:1">Annuler</button><button class="btn btn-red" onclick="doRefus()" style="flex:2">✗ Confirmer le refus</button></div>
+    </div>`:
+    `<div style="display:flex;gap:10px;margin-top:16px"><button class="btn btn-ghost" onclick="S.showRefus=true;R()" style="flex:1;color:#DC2626">✗ Refuser</button><button class="btn btn-green" onclick="doVal()" style="flex:2">✓ Valider</button></div>`;
+  }
+  if(S.role==='assistante')actH=!f.dateSaisie?`<button class="btn btn-dark" onclick="doSaisie()" style="margin-top:16px">✓ Marquer comme saisi dans le logiciel</button>`:
+    `<div style="text-align:center;padding:16px;color:#059669;font-weight:700;font-size:14px">✓ Saisi le ${f.dateSaisie}</div>`;
+
+  return`<div>
+    <div class="detail-hdr">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px">
+        <div><div style="font-size:12px;color:#4B5563;margin-bottom:3px">${f.nom}</div><div style="font-weight:900;font-size:24px;color:white;line-height:1.1">Semaine ${f.sem}</div><div style="font-size:11px;color:#4B5563;margin-top:4px">${semLbl(f.sem,f.an)}</div></div>
+        ${bdg(f.statut)}
+      </div>
+      <div class="stat-row">
+        <div class="stat-box"><div class="stat-val">${fmtH(tot)}</div><div class="stat-lbl">Heures totales</div></div>
+        <div class="stat-box"><div class="stat-val">${nbJ}j</div><div class="stat-lbl">Jours travaillés</div></div>
+        <div class="stat-box"><div class="stat-val">${tp}€</div><div class="stat-lbl">Total primes</div></div>
+      </div>
+    </div>
+    <div style="padding:16px 16px 0">
+      <div class="sec-lbl">Détail des heures</div>
+      ${joursH}${primesH}${noteH}${noteRH}${actH}
+    </div>
+    <div style="height:40px"></div>
+  </div>`;
+}
+function doVal(){S.fiches=S.fiches.map(f=>f.id===S.sel.id?{...f,statut:'validé',noteR:'Validé ✓',dateSaisie:null}:f);S.sel=null;goList();}
+function doRefus(){if(!S.refus.trim())return;S.fiches=S.fiches.map(f=>f.id===S.sel.id?{...f,statut:'refusé',noteR:S.refus}:f);S.refus='';S.showRefus=false;S.sel=null;goList();}
+function doSaisie(){S.fiches=S.fiches.map(f=>f.id===S.sel.id?{...f,dateSaisie:new Date().toISOString().split('T')[0]}:f);S.sel=null;goList();}
+
+// ══ FORM ══
+function newFiche(){S.fd={id:'f'+Date.now(),nom:S.role==='responsable'?'Jean Martin':'Marie Dupont',sem:15,an:2026,statut:'brouillon',jours:initJ(),primes:[],note:'',noteR:''};S.fs=0;S.view='form';R();}
+function editFiche(){S.fd=clone(S.sel);S.fd.statut='brouillon';S.fd.noteR='';S.fs=0;S.view='form';R();}
+
+function renderForm(){
+  const f=S.fd;const tot=totF(f);const tp=totP(f);
+  const steps=['⏱ Heures','🏆 Primes','✅ Résumé'];
+  const nav=`<div class="step-nav">${steps.map((s,i)=>`<button class="step-tab${S.fs===i?' on':''}" onclick="setFS(${i})">${s}</button>`).join('')}</div>`;
+  let body='';
+  if(S.fs===0)body=renderFormS0(f);
+  if(S.fs===1)body=renderFormS1(f,tp);
+  if(S.fs===2)body=renderFormS2(f,tot,tp);
+  return`<div>
+    <div style="background:#F8F8FC;padding:12px 16px;border-bottom:1px solid #E5E7EB;display:flex;justify-content:space-between;align-items:center">
+      <div style="font-size:13px;color:#6B7280">Semaine ${f.sem} · ${semLbl(f.sem,f.an)}</div>
+      <div style="background:#0F0F14;color:white;border-radius:10px;padding:6px 14px;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:14px">${fmtH(tot)}</div>
+    </div>
+    <div style="padding:16px">${nav}${body}</div>
+    <div style="height:40px"></div>
+  </div>`;
+}
+
+function renderFormS0(f){
+  return JOURS.map(jour=>{
+    const j=f.jours[jour];
+    const ents=Object.entries(j.t);
+    const totJ=ents.reduce((s,[,v])=>s+(j.on&&v.d&&v.f?calcH(v.d,v.f,v.p):0),0);
+    const typesH=j.on?ents.map(([tid,v])=>{
+      const d=TYPES.find(t=>t.id===tid);if(!d)return'';
+      return`<div class="type-block" style="border-left-color:${d.color}">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <div style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:${d.color}"></span><span style="font-size:12px;font-weight:700;color:#374151">${d.label}</span><span style="font-size:10px;color:#9CA3AF">×${d.taux}%</span></div>
+          ${tid!=='normal'?`<button onclick="remT('${jour}','${tid}')" style="background:#FEE2E2;border:none;border-radius:6px;width:22px;height:22px;color:#DC2626;cursor:pointer;font-size:14px">×</button>`:''}
+        </div>
+        <div class="time-grid">
+          <div><div class="inp-lbl">Début</div><input class="inp" type="time" value="${v.d||''}" onchange="updH('${jour}','${tid}','d',this.value)"></div>
+          <div><div class="inp-lbl">Fin</div><input class="inp" type="time" value="${v.f||''}" onchange="updH('${jour}','${tid}','f',this.value)"></div>
+          <div><div class="inp-lbl">Pause</div><select class="inp" onchange="updH('${jour}','${tid}','p',this.value)"><option value="0"${v.p===0?' selected':''}>—</option><option value="30"${v.p===30?' selected':''}>30m</option><option value="60"${v.p===60?' selected':''}>1h</option><option value="90"${v.p===90?' selected':''}>1h30</option></select></div>
+        </div>
+      </div>`;
+    }).join(''):'';
+    const addBtns=j.on?TYPES.filter(t=>t.id!=='normal'&&!j.t[t.id]).map(t=>`<button onclick="addT('${jour}','${t.id}')" style="padding:4px 8px;background:white;border:1.5px solid ${t.color};border-radius:7px;font-size:10px;font-weight:700;color:${t.color};cursor:pointer">+ ${t.label}</button>`).join(''):'';
+    return`<div class="form-section">
+      <div class="form-section-hdr" onclick="togJ('${jour}')">
+        <div class="chkbox" style="${j.on?'background:#6366F1;color:white':'border:2px solid #D1D5DB;background:white;color:transparent'}">${j.on?'✓':''}</div>
+        <span style="font-weight:700;font-size:15px;color:${j.on?'#111':'#9CA3AF'};flex:1">${jour}</span>
+        ${j.on&&totJ?`<span style="font-family:'JetBrains Mono',monospace;font-weight:700;font-size:13px;color:#6366F1">${fmtH(totJ)}</span>`:''}
+      </div>
+      ${j.on?`<div style="border-top:1px solid #F3F4F6;padding:12px 16px">${typesH}${addBtns?`<div><div style="font-size:10px;color:#9CA3AF;font-weight:600;margin-bottom:6px">Ajouter un type :</div><div style="display:flex;flex-wrap:wrap;gap:4px">${addBtns}</div></div>`:''}
+      </div>`:''}
+    </div>`;
+  }).join('')+`<button class="btn btn-dark" onclick="setFS(1)" style="margin-top:8px">Suivant — Primes →</button>`;
+}
+function renderFormS1(f,tp){
+  return PRIMES.map(pr=>{const sel=f.primes.find(p=>p.id===pr.id);const q=sel?sel.q:0;
+    return`<div class="prime-row" style="border-color:${q>0?pr.color:'transparent'}">
+      <span style="font-size:22px">${pr.icon}</span>
+      <div style="flex:1"><div style="font-weight:700;font-size:14px;color:#111">${pr.label}</div><div style="font-size:12px;color:#9CA3AF">${pr.montant}€/u</div></div>
+      <div class="stepper">
+        <button class="step-btn" onclick="updP('${pr.id}',-1)" style="${q>0?`background:${pr.color};border-color:${pr.color};color:white`:''}">−</button>
+        <span style="font-family:'JetBrains Mono',monospace;font-weight:700;font-size:15px;min-width:18px;text-align:center;color:${q>0?pr.color:'#D1D5DB'}">${q}</span>
+        <button class="step-btn" onclick="updP('${pr.id}',1)" style="background:${pr.color};border-color:${pr.color};color:white">+</button>
+      </div>
+      ${q>0?`<span style="font-family:'JetBrains Mono',monospace;font-weight:700;font-size:13px;color:${pr.color};min-width:40px;text-align:right">${pr.montant*q}€</span>`:''}
+    </div>`;
+  }).join('')+
+  (tp?`<div style="background:#0F0F14;border-radius:14px;padding:14px 20px;margin:8px 0;display:flex;justify-content:space-between;align-items:center"><span style="color:#6B7280;font-weight:600;font-size:13px">Total primes</span><span style="font-family:'JetBrains Mono',monospace;font-weight:800;font-size:20px;color:white">${tp}€</span></div>`:'')+
+  `<button class="btn btn-dark" onclick="setFS(2)" style="margin-top:8px">Suivant — Résumé →</button>`;
+}
+function renderFormS2(f,tot,tp){
+  const jr=JOURS.filter(j=>f.jours[j].on).map(j=>{const jd=f.jours[j];const tJ=Object.values(jd.t).reduce((s,v)=>s+(v.d&&v.f?calcH(v.d,v.f,v.p):0),0);return`<div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #F3F4F6"><span style="font-size:13px;color:#374151">${j}</span><span style="font-family:'JetBrains Mono',monospace;font-weight:700;font-size:13px">${fmtH(tJ)}</span></div>`;}).join('');
+  const pr=f.primes.map(p=>{const d=PRIMES.find(x=>x.id===p.id);return d?`<div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #F3F4F6"><span style="font-size:13px;color:#374151">${d.icon} ${d.label} ×${p.q}</span><span style="font-family:'JetBrains Mono',monospace;font-weight:700;font-size:13px;color:${d.color}">${d.montant*p.q}€</span></div>`:''}).join('');
+  return`<div style="background:white;border-radius:14px;padding:16px;margin-bottom:10px;box-shadow:0 1px 3px rgba(0,0,0,0.05)">
+    <div class="sec-lbl" style="margin-bottom:10px">Heures</div>${jr}
+    <div style="display:flex;justify-content:space-between;padding:10px 0 0"><span style="font-weight:700;font-size:13px">Total</span><span style="font-family:'JetBrains Mono',monospace;font-weight:800;font-size:15px">${fmtH(tot)}</span></div>
+  </div>
+  ${f.primes.length?`<div style="background:white;border-radius:14px;padding:16px;margin-bottom:10px;box-shadow:0 1px 3px rgba(0,0,0,0.05)"><div class="sec-lbl" style="margin-bottom:10px">Primes</div>${pr}<div style="display:flex;justify-content:space-between;padding:10px 0 0"><span style="font-weight:700;font-size:13px">Total primes</span><span style="font-family:'JetBrains Mono',monospace;font-weight:800;font-size:15px;color:#059669">${tp}€</span></div></div>`:''}
+  <div style="margin-bottom:12px"><div class="sec-lbl" style="margin-bottom:8px">Commentaire (optionnel)</div><textarea class="inp" id="ni" placeholder="Informations pour votre responsable..." style="width:100%">${f.note||''}</textarea></div>
+  <button class="btn btn-green" onclick="submitF()">✓ Envoyer au responsable — ${fmtH(tot)}</button>`;
+}
+
+// ══ FORM ACTIONS ══
+function setFS(n){const ni=$('ni');if(ni)S.fd.note=ni.value;S.fs=n;R();}
+function togJ(j){const jd=S.fd.jours[j];jd.on=!jd.on;if(jd.on&&!Object.keys(jd.t).length)jd.t={normal:{d:'08:00',f:'17:00',p:60}};R();}
+function updH(j,tid,f,v){S.fd.jours[j].t[tid][f]=f==='p'?parseInt(v)||0:v;R();}
+function addT(j,tid){S.fd.jours[j].t[tid]={d:'',f:'',p:0};R();}
+function remT(j,tid){delete S.fd.jours[j].t[tid];R();}
+function updP(id,d){const i=S.fd.primes.findIndex(p=>p.id===id);if(i>=0){S.fd.primes[i].q=Math.max(0,S.fd.primes[i].q+d);if(!S.fd.primes[i].q)S.fd.primes.splice(i,1);}else if(d>0)S.fd.primes.push({id,q:1});R();}
+function submitF(){const ni=$('ni');if(ni)S.fd.note=ni.value;const nf={...S.fd,statut:'soumis',date:new Date().toISOString().split('T')[0],noteR:''};S.fiches=[nf,...S.fiches.filter(f=>f.id!==nf.id)];S.view='list';S.fd=null;R();}
+
+// ══ DETAIL BIND ══
+document.addEventListener('input',e=>{if(e.target.id==='ri')S.refus=e.target.value;});
+window.setRole=setRole;window.goHome=goHome;window.goList=goList;window.setTab=setTab;
+window.openF=openF;window.newFiche=newFiche;window.editFiche=editFiche;
+window.doVal=doVal;window.doRefus=doRefus;window.doSaisie=doSaisie;
+window.setFS=setFS;window.togJ=togJ;window.updH=updH;window.addT=addT;window.remT=remT;window.updP=updP;window.submitF=submitF;
+
+R();
+</script>
+</body>
+</html>
