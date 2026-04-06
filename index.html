@@ -204,9 +204,9 @@ function render(){
 // ══ LANDING ══
 function renderLanding(){
   const cards=[
-    {id:'intervenant',emoji:'👷',name:'Interface Intervenant',desc:'Saisir ses heures et consulter ses fiches',color:'#6366F1',bg:'rgba(99,102,241,0.12)',tabs:['Faire ma FDS','Mes FDS validées / refusées']},
-    {id:'responsable', emoji:'✅',name:'Interface Responsable', desc:'Saisir ses heures + valider celles de l\'équipe',color:'#059669',bg:'rgba(5,150,105,0.12)',tabs:['Faire ma FDS','Mes FDS','Valider les FDS']},
-    {id:'assistante',  emoji:'📋',name:'Interface Assistante RH',desc:'Gérer les fiches à saisir et saisies',color:'#F59E0B',bg:'rgba(245,158,11,0.12)',tabs:['FDS à saisir','FDS saisies']},
+    {id:'intervenant',emoji:'👷',svg:'<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>',name:'Interface Intervenant',desc:'Saisir ses heures et consulter ses fiches',color:'#6366F1',bg:'rgba(99,102,241,0.12)',tabs:['Faire ma FDS','Mes FDS validées / refusées']},
+    {id:'responsable', emoji:'✅',svg:'<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/><polyline points="16,11 17.5,13 21,10"/></svg>',name:'Interface Responsable', desc:'Saisir ses heures + valider celles de l\'équipe',color:'#059669',bg:'rgba(5,150,105,0.12)',tabs:['Faire ma FDS','Mes FDS','Valider les FDS']},
+    {id:'assistante',  emoji:'📋',svg:'<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="16" y2="17"/></svg>',name:'Interface Assistante RH',desc:'Gérer les fiches à saisir et saisies',color:'#F59E0B',bg:'rgba(245,158,11,0.12)',tabs:['FDS à saisir','FDS saisies']},
   ];
   return`<style>@media (max-width:600px){.landing-grid{grid-template-columns:1fr !important}.landing-wrap{max-width:420px !important}}</style><div style="position:fixed;inset:0;background:#fff;color:#0f172a;overflow-y:auto;font-family:inherit;z-index:9999">
     <div class="landing-wrap" style="max-width:1040px;margin:0 auto;padding:32px 20px;display:flex;flex-direction:column;align-items:center">
@@ -216,7 +216,7 @@ function renderLanding(){
       <div style="font-size:15px;color:#475569;margin-bottom:20px">Choisissez un profil pour explorer</div>
       <div class="landing-grid" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;width:100%">
         ${cards.map(c=>`<div onclick="setRole('${c.id}')" style="background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:20px;cursor:pointer;box-shadow:0 4px 16px rgba(15,23,42,0.06);display:flex;flex-direction:column;align-items:center;text-align:center">
-          <div style="width:60px;height:60px;border-radius:14px;background:${c.bg};display:flex;align-items:center;justify-content:center;font-size:28px;margin-bottom:12px">${c.emoji}</div>
+          <div style="width:64px;height:64px;border-radius:50%;background:${c.color};display:flex;align-items:center;justify-content:center;margin:0 auto 12px">${c.svg}</div>
           <div style="font-size:17px;font-weight:700;color:#0f172a;margin-bottom:6px">${c.name.replace('Interface ','')}</div>
           <div style="font-size:13px;color:#64748b;margin-bottom:10px">${c.desc}</div>
           <div style="font-size:12px;color:${c.color};font-weight:600;margin-bottom:14px">${c.tabs.length} onglets</div>
